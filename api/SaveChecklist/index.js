@@ -34,7 +34,7 @@ module.exports = async function (context, req) {
       context.log('e-mail sent');
   
       context.res.status(200);
-      context.res.body = 'Formulaire envoyé';
+      context.res.body = JSON.stringify(parts);
 
     } else {
       context.res.status(500).send("No file(s) found.");
