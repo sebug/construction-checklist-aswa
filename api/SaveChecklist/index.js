@@ -2,11 +2,12 @@ const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail')
 
 module.exports = async function (context, req) {
-    context.log("Returns the result of the function.");
+    context.log("Starting sending report e-mail");
 
     const body = req.rawBody;
     // Retrieve the boundary id
     const boundary = multipart.getBoundary(req.headers["content-type"]);
+    context.log('the boundary is ' + boundary);
     if (boundary) {
       const parts = multipart.parse(body, boundary);
   
@@ -23,6 +24,8 @@ module.exports = async function (context, req) {
 
       let text = 'Compte-rendu contrôle construction';
       let html = '<p>Compte-rendu contrôle construction</p>';
+      text += body;
+      html += '<pre>' + body + '</pre>';
 
       msg.text = text;
       msg.html = html;
