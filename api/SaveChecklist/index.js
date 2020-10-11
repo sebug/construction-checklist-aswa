@@ -1,4 +1,4 @@
-import * as multipart from 'parse-multipart';
+const multipart = require('parse-multipart');
 
 module.exports = async function (context, req) {
     context.log("Returns the result of the function.");
@@ -14,9 +14,9 @@ module.exports = async function (context, req) {
       }
   
       context.res.status(200);
+      context.res.body = 'Formulaire envoyé';
+
     } else {
       context.res.status(500).send("No file(s) found.");
     }
-
-    context.done();
 }
