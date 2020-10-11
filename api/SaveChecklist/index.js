@@ -12,7 +12,7 @@ module.exports = async function (context, req) {
       const parts = multipart.parse(body, boundary);
   
       context.log('The length is ' + parts.length);
-      context.log(JSON.stringify(parts[0]));
+      context.log(JSON.stringify(parts));
 
       sgMail.setApiKey(process.env.SENDGRID_API_KEY)
       const msg = {
