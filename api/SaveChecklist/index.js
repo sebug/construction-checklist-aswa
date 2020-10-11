@@ -1,4 +1,4 @@
-const multipart = require('parse-multipart');
+const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail')
 
 module.exports = async function (context, req) {
@@ -19,11 +19,9 @@ module.exports = async function (context, req) {
     // Retrieve the boundary id
     const boundary = multipart.getBoundary(req.headers["content-type"]);
     if (boundary) {
-      const files = multipart.Parse(Buffer.from(body), boundary);
+      const parts = multipart.parse(body, boundary);
   
-      if (files && files.length > 0) {
-        // Do what you want to do with the file
-      }
+      context.log(parts);
   
       context.res.status(200);
       context.res.body = 'Formulaire envoyé';

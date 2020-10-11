@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^7.2.6",
-    "parse-multipart": "1.0.4"
+    "multipart-formdata": "^1.1.0"
   },
   "devDependencies": {}
 }
