@@ -59,7 +59,7 @@ module.exports = async function (context, req) {
       let text = `Compte-rendu contrôle construction ${nameOfConstruction}
       établi par ${mailAddress} le ${date}
       `;
-      let html = `<p><strong>Compte-rendu contrôle construction ${nameOfConstruction}<strong><br>
+      let html = `<p><strong>Compte-rendu contrôle construction ${nameOfConstruction}</strong><br>
       établi par ${mailAddress} le ${date}</p>
       `;
       parts.forEach(part => {
