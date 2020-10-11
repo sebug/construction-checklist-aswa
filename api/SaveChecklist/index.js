@@ -1,6 +1,18 @@
 const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail')
 
+const fieldCodeToFieldName = {
+    'illumination': 'Éclairage (changement ampoules et néons)',
+    'hygrometrie': 'Hygrométrie + Température',
+    'kitchen': 'Matériel électrique cuisine',
+    'water': 'Eau (robinet, WC, Douche)',
+    'access': 'Nettoyage des Accès (Entrée, Saut de Loup',
+    'floor': 'Remplir les grilles de sol',
+    'generator': 'Faire tourner le générateur aux. 4x/an',
+    'controllist': 'Remplir la fiche contrôle',
+    'dehumidifier': 'Contrôler déshumidificateur'
+};
+
 module.exports = async function (context, req) {
     context.log("Starting sending report e-mail");
 
@@ -24,8 +36,20 @@ module.exports = async function (context, req) {
 
       let text = 'Compte-rendu contrôle construction';
       let html = '<p>Compte-rendu contrôle construction</p>';
-      text += body;
-      html += '<pre>' + body + '</pre>';
+      parts.forEach(part => {
+          if (part && part.name) {
+              if (part.name.indexOf('Comments') >= 0) {
+                  // always add
+                  text += part.field + '\n';
+                  html += '<p>' + part.field + '</p>';
+              } else if (fieldCodeToFieldName[part.name]) {
+                  const innerText = fieldCodeToFieldName[part.name] +
+                    ': ' + part.field;
+                  text += innerText + '\n';
+                  html += '<p>' + innerText + '</p>';
+              }
+          }
+      });
 
       msg.text = text;
       msg.html = html;
@@ -34,7 +58,7 @@ module.exports = async function (context, req) {
       context.log('e-mail sent');
   
       context.res.status(200);
-      context.res.body = JSON.stringify(parts);
+      context.res.body = 'Checklist envoyée.';
 
     } else {
       context.res.status(500).send("No file(s) found.");
