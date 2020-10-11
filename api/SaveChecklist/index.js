@@ -4,12 +4,12 @@ const sgMail = require('@sendgrid/mail')
 module.exports = async function (context, req) {
     context.log("Starting sending report e-mail");
 
-    const body = req.rawBody;
+    const body = req.body;
     // Retrieve the boundary id
     const boundary = multipart.getBoundary(req.headers["content-type"]);
     context.log('the boundary is ' + boundary);
     if (boundary) {
-      const parts = multipart.parse(body, boundary);
+      const parts = multipart.parse(req.body, boundary);
   
       context.log('The length is ' + parts.length);
       context.log(JSON.stringify(parts));
