@@ -1,5 +1,6 @@
 const multipart = require('multipart-formdata');
-const sgMail = require('@sendgrid/mail')
+const sgMail = require('@sendgrid/mail');
+const mail = require('@sendgrid/mail');
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -34,8 +35,33 @@ module.exports = async function (context, req) {
           text: 'Easy text'
       };
 
-      let text = 'Compte-rendu contrôle construction';
-      let html = '<p>Compte-rendu contrôle construction</p>';
+      let nameOfConstruction = '';
+      let date = '';
+      let mailAddress = '';
+
+      parts.forEach(part => {
+            if (part && part.name) {
+                switch (part.name) {
+                    case 'nameOfConstruction':
+                        nameOfConstruction = part.field;
+                        msg.subject = msg.subject + ' ' + nameOfConstruction;
+                        break;
+                    case 'date':
+                        date = part.field;
+                        break;
+                    case 'mailAddress':
+                        mailAddress = part.field;
+                        break;
+                }
+            }
+      });
+
+      let text = `Compte-rendu contrôle construction ${nameOfConstruction}
+      établi par ${mailAddress} le ${date}
+      `;
+      let html = `<p><strong>Compte-rendu contrôle construction ${nameOfConstruction}<strong><br>
+      établi par ${mailAddress} le ${date}</p>
+      `;
       parts.forEach(part => {
           if (part && part.name) {
               if (part.name.indexOf('Comments') >= 0) {
