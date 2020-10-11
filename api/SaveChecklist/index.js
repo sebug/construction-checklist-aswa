@@ -1,7 +1,19 @@
 const multipart = require('parse-multipart');
+const sgMail = require('@sendgrid/mail')
 
 module.exports = async function (context, req) {
     context.log("Returns the result of the function.");
+
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    const msg = {
+        to: process.env.TO_EMAIL, // Change to your recipient
+        from: process.env.FROM_EMAIL, // Change to your verified sender
+        subject: 'Contrôle construction',
+        text: 'Easy text',
+        html: '<strong>easy</string> text',
+    };
+    await sgMail.send(msg);
+    context.log('e-mail sent');
 
     const body = req.rawBody;
     // Retrieve the boundary id
