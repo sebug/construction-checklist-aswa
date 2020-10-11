@@ -11,7 +11,7 @@ module.exports = async function (context, req) {
         // Do what you want to do with the file
       }
   
-      context.res.status(200);
+      context.res.status(200).send("Données envoyés");
     } else {
       context.res.status(500).send("No file(s) found.");
     }
