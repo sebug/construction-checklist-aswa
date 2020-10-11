@@ -1,6 +1,8 @@
 import * as multipart from 'parse-multipart';
 
 module.exports = async function (context, req) {
+    context.log("Returns the result of the function.");
+
     const body = req.rawBody;
     // Retrieve the boundary id
     const boundary = multipart.getBoundary(req.headers["content-type"]);
@@ -11,8 +13,10 @@ module.exports = async function (context, req) {
         // Do what you want to do with the file
       }
   
-      context.res.status(200).send("Données envoyés");
+      context.res.status(200);
     } else {
       context.res.status(500).send("No file(s) found.");
     }
+
+    context.done();
 }
