@@ -81,7 +81,7 @@ module.exports = async function (context, req) {
 		      filename: part.filename,
 		      contentType: part.type,
 		      content: part.data.toString('base64'),
-		      cid: nonPhotoName + 'cid',
+		      content_id: nonPhotoName + 'cid',
 		      disposition: 'inline'
 		  });
 		  html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
