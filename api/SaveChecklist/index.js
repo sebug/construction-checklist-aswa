@@ -1,6 +1,5 @@
 const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail');
-const mail = require('@sendgrid/mail');
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -25,14 +24,15 @@ module.exports = async function (context, req) {
       const parts = multipart.parse(req.body, boundary);
   
       context.log('The length is ' + parts.length);
-      context.log(JSON.stringify(parts));
+      context.log(JSON.stringify(parts.map(p => p.name));
 
       sgMail.setApiKey(process.env.SENDGRID_API_KEY)
       const msg = {
           to: process.env.TO_EMAIL, // Change to your recipient
           from: process.env.FROM_EMAIL, // Change to your verified sender
           subject: 'Contrôle construction',
-          text: 'Easy text'
+          text: 'Easy text',
+	  files: []
       };
 
       let nameOfConstruction = '';
@@ -73,9 +73,16 @@ module.exports = async function (context, req) {
                     ': ' + part.field;
                   text += innerText + '\n';
                   html += '<p>' + innerText + '</p>';
-              } else if (part.name && part.name.indexOf('Photo') >= 0) {
+              } else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename) {
 		  const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
 		  context.log('Got photo for ' + nonPhotoName);
+		  msg.files.push({
+		      filename: part.filename,
+		      contentType: part.type,
+		      content: part.data,
+		      cid: nonPhotoName + 'cid'
+		  });
+		  html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
 	      }
           }
       });
