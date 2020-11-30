@@ -32,7 +32,7 @@ module.exports = async function (context, req) {
           from: process.env.FROM_EMAIL, // Change to your verified sender
           subject: 'Contrôle construction',
           text: 'Easy text',
-	  files: []
+	  attachments: []
       };
 
       let nameOfConstruction = '';
@@ -76,7 +76,7 @@ module.exports = async function (context, req) {
               } else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename) {
 		  const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
 		  context.log('Got photo for ' + nonPhotoName);
-		  msg.files.push({
+		  msg.attachments.push({
 		      filename: part.filename,
 		      contentType: part.type,
 		      content: part.data,
