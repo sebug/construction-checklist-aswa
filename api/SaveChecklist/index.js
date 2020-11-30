@@ -73,7 +73,10 @@ module.exports = async function (context, req) {
                     ': ' + part.field;
                   text += innerText + '\n';
                   html += '<p>' + innerText + '</p>';
-              }
+              } else if (part.name && part.name.indexOf('Photo') >= 0) {
+		  const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
+		  context.log('Got photo for ' + nonPhotoName);
+	      }
           }
       });
 
