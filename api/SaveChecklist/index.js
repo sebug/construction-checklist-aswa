@@ -38,7 +38,8 @@ module.exports = async function (context, req) {
 
       let nameOfConstruction = '';
       let date = '';
-      let mailAddress = '';
+	let mailAddress = '';
+	let hasToRepair = false;
 
       parts.forEach(part => {
             if (part && part.name) {
@@ -54,8 +55,16 @@ module.exports = async function (context, req) {
                         mailAddress = part.field;
                         break;
                 }
+		if (part.field === 'torepair') {
+		    hasToRepair = true;
+		}
             }
       });
+
+	if (hasToRepair && nameOfConstruction) {
+	    msg.subject = 'A réparer: ' + nameOfConstruction;
+	}
+
 
       let text = `Compte-rendu contrôle construction ${nameOfConstruction}
       établi par ${mailAddress} le ${date}
