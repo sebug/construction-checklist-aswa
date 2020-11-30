@@ -17,6 +17,7 @@ module.exports = async function (context, req) {
     context.log("Starting sending report e-mail");
 
     const body = req.body;
+    context.log('The header is ' + req.headers['content-type']);
     // Retrieve the boundary id
     const boundary = multipart.getBoundary(req.headers["content-type"]);
     context.log('the boundary is ' + boundary);
@@ -80,7 +81,8 @@ module.exports = async function (context, req) {
 		      filename: part.filename,
 		      contentType: part.type,
 		      content: part.data,
-		      cid: nonPhotoName + 'cid'
+		      cid: nonPhotoName + 'cid',
+		      disposition: 'inline'
 		  });
 		  html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
 	      }
