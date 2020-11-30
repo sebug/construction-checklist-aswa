@@ -74,13 +74,13 @@ module.exports = async function (context, req) {
                     ': ' + part.field;
                   text += innerText + '\n';
                   html += '<p>' + innerText + '</p>';
-              } else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename) {
+              } else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
 		  const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
 		  context.log('Got photo for ' + nonPhotoName);
 		  msg.attachments.push({
 		      filename: part.filename,
 		      contentType: part.type,
-		      content: part.data,
+		      content: part.data.toString('base64'),
 		      cid: nonPhotoName + 'cid',
 		      disposition: 'inline'
 		  });
