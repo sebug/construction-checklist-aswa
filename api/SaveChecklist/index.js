@@ -24,7 +24,7 @@ module.exports = async function (context, req) {
       const parts = multipart.parse(req.body, boundary);
   
       context.log('The length is ' + parts.length);
-      context.log(JSON.stringify(parts.map(p => p.name));
+	context.log(JSON.stringify(parts.map(p => p.name)));
 
       sgMail.setApiKey(process.env.SENDGRID_API_KEY)
       const msg = {
