@@ -90,10 +90,14 @@ module.exports = async function (context, req) {
 		} else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
 		    const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
 		    context.log('Got photo for ' + nonPhotoName);
+
+		    const resizedBuffer = await sharp(part.data).resize({ width: 480 }).toBuffer();
+		    
+		    
 		    msg.attachments.push({
 			filename: part.filename,
 			contentType: part.type,
-			content: part.data.toString('base64'),
+			content: resizedBuffer.toString('base64'),
 			content_id: nonPhotoName + 'cid',
 			disposition: 'inline'
 		    });
