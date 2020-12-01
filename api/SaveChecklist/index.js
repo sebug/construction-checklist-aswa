@@ -1,5 +1,6 @@
 const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail');
+const sharp = require('sharp');
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -26,6 +27,7 @@ module.exports = async function (context, req) {
 	
 	context.log('The length is ' + parts.length);
 	context.log(JSON.stringify(parts.map(p => p.name)));
+	context.log('sharp is ' + sharp);
 
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 	const msg = {
