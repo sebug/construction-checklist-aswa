@@ -90,10 +90,20 @@ module.exports = async function (context, req) {
 		if (part.name.indexOf('Comments') >= 0) {
                     // always add
                     text += part.field + '\n';
-                    html += '<p>' + part.field + '</p>';
+		    if (part.field) {
+			html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8');
+		    } else {
+			html += '<p>' + part.field + '</p>';
+		    }
 		} else if (fieldCodeToFieldName[part.name]) {
+		    let fieldText = part.field;
+		    if (fieldText === 'ok') {
+			fieldText = 'Rien à signaler';
+		    } else if (fieldText === 'torepair') {
+			fieldText = 'À réparer';
+		    }
                     const innerText = fieldCodeToFieldName[part.name] +
-			  ': ' + part.field;
+			  ': ' + fieldText;
                     text += innerText + '\n';
                     html += '<p>' + innerText + '</p>';
 		} else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
