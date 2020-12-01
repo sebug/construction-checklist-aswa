@@ -10,5 +10,7 @@
     "@sendgrid/mail": "^7.2.6",
     "multipart-formdata": "^1.1.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jimp": "^0.16.1"
+  }
 }
