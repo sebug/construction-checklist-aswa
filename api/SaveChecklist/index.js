@@ -38,6 +38,10 @@ module.exports = async function (context, req) {
 	    attachments: []
 	};
 
+	if (process.env.SECONDARY_TO_EMAIL) {
+	    msg.to = [ msg.to, process.env.SECONDARY_TO_EMAIL ];
+	}
+
 	let nameOfConstruction = '';
 	let date = '';
 	let mailAddress = '';
