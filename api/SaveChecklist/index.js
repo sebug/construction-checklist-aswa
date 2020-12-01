@@ -22,92 +22,94 @@ module.exports = async function (context, req) {
     const boundary = multipart.getBoundary(req.headers["content-type"]);
     context.log('the boundary is ' + boundary);
     if (boundary) {
-      const parts = multipart.parse(req.body, boundary);
-  
-      context.log('The length is ' + parts.length);
+	const parts = multipart.parse(req.body, boundary);
+	
+	context.log('The length is ' + parts.length);
 	context.log(JSON.stringify(parts.map(p => p.name)));
 
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-      const msg = {
-          to: process.env.TO_EMAIL, // Change to your recipient
-          from: process.env.FROM_EMAIL, // Change to your verified sender
-          subject: 'Contrôle construction',
-          text: 'Easy text',
-	  attachments: []
-      };
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+	const msg = {
+            to: process.env.TO_EMAIL, // Change to your recipient
+            from: process.env.FROM_EMAIL, // Change to your verified sender
+            subject: 'Contrôle construction',
+            text: 'Easy text',
+	    attachments: []
+	};
 
-      let nameOfConstruction = '';
-      let date = '';
+	let nameOfConstruction = '';
+	let date = '';
 	let mailAddress = '';
 	let hasToRepair = false;
 
-      parts.forEach(part => {
-            if (part && part.name) {
+	for (let part of parts) {
+	    if (part && part.name) {
                 switch (part.name) {
-                    case 'nameOfConstruction':
-                        nameOfConstruction = part.field;
-                        msg.subject = msg.subject + ' ' + nameOfConstruction;
-                        break;
-                    case 'date':
-                        date = part.field;
-                        break;
-                    case 'mailAddress':
-                        mailAddress = part.field;
-                        break;
+                case 'nameOfConstruction':
+                    nameOfConstruction = part.field;
+                    msg.subject = msg.subject + ' ' + nameOfConstruction;
+                    break;
+                case 'date':
+                    date = part.field;
+                    break;
+                case 'mailAddress':
+                    mailAddress = part.field;
+                    break;
                 }
 		if (part.field === 'torepair') {
 		    hasToRepair = true;
 		}
             }
-      });
+	}
+
+
 
 	if (hasToRepair && nameOfConstruction) {
 	    msg.subject = 'A réparer: ' + nameOfConstruction;
 	}
 
 
-      let text = `Compte-rendu contrôle construction ${nameOfConstruction}
-      établi par ${mailAddress} le ${date}
-      `;
-      let html = `<p><strong>Compte-rendu contrôle construction ${nameOfConstruction}</strong><br>
-      établi par ${mailAddress} le ${date}</p>
-      `;
-      parts.forEach(part => {
-          if (part && part.name) {
-              if (part.name.indexOf('Comments') >= 0) {
-                  // always add
-                  text += part.field + '\n';
-                  html += '<p>' + part.field + '</p>';
-              } else if (fieldCodeToFieldName[part.name]) {
-                  const innerText = fieldCodeToFieldName[part.name] +
-                    ': ' + part.field;
-                  text += innerText + '\n';
-                  html += '<p>' + innerText + '</p>';
-              } else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
-		  const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
-		  context.log('Got photo for ' + nonPhotoName);
-		  msg.attachments.push({
-		      filename: part.filename,
-		      contentType: part.type,
-		      content: part.data.toString('base64'),
-		      content_id: nonPhotoName + 'cid',
-		      disposition: 'inline'
-		  });
-		  html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
-	      }
-          }
-      });
+	let text = `Compte-rendu contrôle construction ${nameOfConstruction}
+	établi par ${mailAddress} le ${date}
+	`;
+	let html = `<p><strong>Compte-rendu contrôle construction ${nameOfConstruction}</strong><br>
+	    établi par ${mailAddress} le ${date}</p>
+	    `;
+	for (let part of parts) {
+	    if (part && part.name) {
+		if (part.name.indexOf('Comments') >= 0) {
+                    // always add
+                    text += part.field + '\n';
+                    html += '<p>' + part.field + '</p>';
+		} else if (fieldCodeToFieldName[part.name]) {
+                    const innerText = fieldCodeToFieldName[part.name] +
+			  ': ' + part.field;
+                    text += innerText + '\n';
+                    html += '<p>' + innerText + '</p>';
+		} else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
+		    const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
+		    context.log('Got photo for ' + nonPhotoName);
+		    msg.attachments.push({
+			filename: part.filename,
+			contentType: part.type,
+			content: part.data.toString('base64'),
+			content_id: nonPhotoName + 'cid',
+			disposition: 'inline'
+		    });
+		    html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
+		}
+            }
+	}
 
-      msg.text = text;
-      msg.html = html;
+	msg.text = text;
+	msg.html = html;
 
-      await sgMail.send(msg);
-      context.log('e-mail sent');
-  
-      context.res.status(200);
-      context.res.body = 'Checklist envoyée.';
+	await sgMail.send(msg);
+	context.log('e-mail sent');
+	
+	context.res.status(200);
+	context.res.body = 'Checklist envoyée.';
 
     } else {
-      context.res.status(500).send("No file(s) found.");
+	context.res.status(500).send("No file(s) found.");
     }
 }
