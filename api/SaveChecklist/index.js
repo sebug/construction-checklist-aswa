@@ -51,7 +51,7 @@ module.exports = async function (context, req) {
 	    if (part && part.name) {
                 switch (part.name) {
                 case 'nameOfConstruction':
-                    nameOfConstruction = part.field;
+                    nameOfConstruction = new Buffer(part.field, 'ascii').toString('utf8');
                     msg.subject = msg.subject + ' ' + nameOfConstruction;
                     break;
                 case 'date':
