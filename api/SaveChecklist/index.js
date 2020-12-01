@@ -31,7 +31,7 @@ module.exports = async function (context, req) {
 
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 	const msg = {
-            to: process.env.TO_EMAIL, // Change to your recipient
+            to: [ process.env.TO_EMAIL ], // Change to your recipient
             from: process.env.FROM_EMAIL, // Change to your verified sender
             subject: 'Contrôle construction',
             text: 'Easy text',
@@ -39,7 +39,7 @@ module.exports = async function (context, req) {
 	};
 
 	if (process.env.SECONDARY_TO_EMAIL) {
-	    msg.to = [ msg.to, process.env.SECONDARY_TO_EMAIL ];
+	    msg.to.push(process.env.SECONDARY_TO_EMAIL);
 	}
 
 	let nameOfConstruction = '';
@@ -65,6 +65,11 @@ module.exports = async function (context, req) {
 		    hasToRepair = true;
 		}
             }
+	}
+
+	// Send to ourselves just in case
+	if (mailAddress) {
+	    msg.to.push(mailAddress);
 	}
 
 
