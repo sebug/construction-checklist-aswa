@@ -68,7 +68,7 @@ module.exports = async function (context, req) {
 	}
 
 	// Send to ourselves just in case
-	if (mailAddress) {
+	if (mailAddress && msg.to.filter(addr => addr === mailAddress).length === 0) {
 	    msg.cc = [mailAddress];
 	}
 
