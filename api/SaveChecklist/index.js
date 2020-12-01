@@ -69,7 +69,7 @@ module.exports = async function (context, req) {
 
 	// Send to ourselves just in case
 	if (mailAddress) {
-	    msg.to.push(mailAddress);
+	    msg.cc = [mailAddress];
 	}
 
 
@@ -91,7 +91,7 @@ module.exports = async function (context, req) {
                     // always add
                     text += part.field + '\n';
 		    if (part.field) {
-			html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8');
+			html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8') + '</p>';
 		    } else {
 			html += '<p>' + part.field + '</p>';
 		    }
