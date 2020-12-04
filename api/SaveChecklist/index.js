@@ -110,7 +110,14 @@ module.exports = async function (context, req) {
 		    const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
 		    context.log('Got photo for ' + nonPhotoName);
 
-		    const resizedBuffer = await sharp(part.data).resize({ width: 480 }).toBuffer();
+		    let resizedBuffer = part.data;
+		    try {
+
+			resizedBuffer = await sharp(part.data).resize({ width: 480 }).toBuffer();
+		    } catch (e) {
+			context.log('Did not manage to resize image, attaching original');
+			resizedBuffer = part.data;
+		    }
 		    
 		    
 		    msg.attachments.push({
