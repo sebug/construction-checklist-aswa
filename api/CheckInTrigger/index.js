@@ -6,6 +6,6 @@ module.exports = async function (context, req) {
         headers: {
             "Location": "/?construction=" + encodeURIComponent(req.query.construction)
         },
-        body: responseMessage
+        body: null
     };
 }
