@@ -19,7 +19,8 @@
       "tableName": "CheckIn",
       "connection": "StorageAccountConnectionStringAppSetting",
       "name": "tableBinding",
-      "direction": "out"
+      "direction": "out",
+      "type": "table"
     }
   ]
 }
