@@ -5,8 +5,8 @@ module.exports = async function (context, req) {
         context.bindings.tableBinding = [];
 
         context.bindings.tableBinding.push({
-            "PartitionKey": "Prod",
-            "RowKey": req.query.construction + "_" + d.toISOString(),
+            "partitionKey": "Prod",
+            "rowKey": req.query.construction + "_" + d.toISOString(),
             "Date": d.toISOString(),
             "Construction": d.toISOString()
         });
