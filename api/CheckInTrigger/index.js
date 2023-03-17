@@ -36,7 +36,7 @@ module.exports = async function (context, req) {
             StartDate: d.toISOString(),
             Construction: req.query.construction
         };
-        await tableClient.insertEntity(entity);
+        await tableClient.createEntity(entity);
 
         context.res = {
             status: 302,
