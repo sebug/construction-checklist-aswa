@@ -11,7 +11,7 @@ module.exports = async function (context, req) {
         "Construction": d.toISOString()
     });
 
-    context.res = {
+    context.bindings.res = {
         status: 302,
         headers: {
             "Location": "/?construction=" + encodeURIComponent(req.query.construction)
