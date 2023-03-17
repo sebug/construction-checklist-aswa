@@ -15,7 +15,7 @@ module.exports = async function (context, req) {
         context.log(e);
     }
 
-    context.bindings.res = {
+    context.res = {
         status: 302,
         headers: {
             "Location": "/?construction=" + encodeURIComponent(req.query.construction)
