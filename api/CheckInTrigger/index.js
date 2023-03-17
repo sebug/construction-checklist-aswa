@@ -1,10 +1,10 @@
 module.exports = async function (context, req) {
-    context.log('Checking in on shelter ' + req.query.shelter + ' at ' + new Date());
+    context.log('Checking in on construction ' + req.query.construction + ' at ' + new Date());
 
     context.res = {
         status: 302,
         headers: {
-            "Location": "/?shelter=" + encodeURIComponent(req.query.shelter)
+            "Location": "/?construction=" + encodeURIComponent(req.query.construction)
         },
         body: responseMessage
     };
