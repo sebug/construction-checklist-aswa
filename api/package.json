@@ -7,9 +7,9 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@azure/data-tables": "^13.2.1",
     "@sendgrid/mail": "^7.2.6",
     "multipart-formdata": "^1.1.0",
     "sharp": "^0.26.3"
-  },
-  "devDependencies": {}
+  }
 }

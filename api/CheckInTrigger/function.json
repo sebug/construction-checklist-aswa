@@ -14,13 +14,6 @@
       "type": "http",
       "direction": "out",
       "name": "res"
-    },
-    {
-      "tableName": "CheckIn",
-      "connection": "StorageAccountConnectionStringAppSetting",
-      "name": "tableBinding",
-      "direction": "out",
-      "type": "table"
     }
   ]
 }
