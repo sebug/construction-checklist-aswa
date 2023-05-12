@@ -41,6 +41,7 @@ module.exports = async function (context, req) {
         await tableClient.createEntity(entity);
 
         try {
+            context.log('Sending checkin mail to ' + process.env.CHECKIN_MAIL_TO);
             sgMail.setApiKey(process.env.SENDGRID_API_KEY)
             const msg = {
                     to: [ process.env.CHECKIN_MAIL_TO ], // Change to your recipient
