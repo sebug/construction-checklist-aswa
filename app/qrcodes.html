@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>QR Codes</title>
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>QR Codes</h1>
+        <h2>Entrée</h2>
+        <p id="entree"></p>
+        <h2>Sortie</h2>
+        <p id="sortie"></p>
+        <script>
+            async function fillCodes(construction) {
+                const checkInQRPromise = fetch('/api/CheckInQRCodeTrigger?construction=' +
+                encodeURIComponent(construction)).then(r => r.json());
+                const checkOutQRPromise = fetch('/api/CheckOutQRCodeTrigger?construction=' +
+                encodeURIComponent(construction)).then(r => r.json());
+                const responses = await Promise.all([checkInQRPromise, checkOutQRPromise]);
+                const checkIn = responses[0];
+                const checkOut = responses[1];
+                const checkInParagrah = document.querySelector('#entree');
+                const checkOutParagraph = document.querySelector('#sortie');
+                checkInParagrah.innerHTML = '';
+                checkOutParagraph.innerHTML = '';
+                const checkInImage = document.createElement('img');
+                checkInImage.setAttribute('src', checkIn.dataUrl);
+                checkInParagrah.appendChild(checkInImage);
+                const checkOutImage = document.createElement('img');
+                checkOutImage.setAttribute('src', checkOut.dataUrl);
+                checkOutParagraph.appendChild(checkOutImage);
+            }
+            const searchParams = new URLSearchParams(location.search);
+            const construction = searchParams.get('construction');
+            fillCodes(construction);
+        </script>
+    </body>
+</html>
