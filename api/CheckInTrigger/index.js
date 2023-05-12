@@ -1,4 +1,6 @@
 const { TableServiceClient, AzureNamedKeyCredential, TableClient } = require("@azure/data-tables");
+const sgMail = require('@sendgrid/mail');
+const sharp = require('sharp');
 
 module.exports = async function (context, req) {
     try {
@@ -37,6 +39,21 @@ module.exports = async function (context, req) {
             Construction: req.query.construction
         };
         await tableClient.createEntity(entity);
+
+        try {
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+            const msg = {
+                    to: [ process.env.CHECKIN_MAIL_TO ], // Change to your recipient
+                    from: process.env.FROM_EMAIL, // Change to your verified sender
+                    subject: 'Checkin construction ' + req.query.construction,
+                    text: 'Arrivée à la construction ' + req.query.construction + ' à ' + d.toISOString(),
+                attachments: []
+            };
+            await sgMail.send(msg);
+        } catch (sendException) {
+            context.log(sendException);
+            // On va quand-même rediriger
+        }
 
         context.res = {
             status: 302,
