@@ -77,7 +77,8 @@ module.exports = async function (context, req) {
 			msg.cc = [mailAddress];
 		}
 
-		if (secondMailAddress && msg.to.filter(addr => addr === secondMailAddress).length === 0) {
+		if (secondMailAddress && msg.to.filter(addr => addr === secondMailAddress).length === 0 &&
+		(!msg.cc || msg.cc.filter(addr => addr === secondMailAddress).length === 0)) {
 			if (!msg.cc) {
 				msg.cc = [];
 			}
