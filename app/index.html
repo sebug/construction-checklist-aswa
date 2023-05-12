@@ -182,5 +182,9 @@
 	  </div>
       </form>
     </main>
+	<script>
+		const searchParams = new URLSearchParams(location.search);
+		document.querySelector('#nameOfConstruction').value = searchParams.get('construction');
+	</script>
   </body>
 </html>
