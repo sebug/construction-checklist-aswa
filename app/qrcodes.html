@@ -34,6 +34,8 @@
                 const checkOutImage = document.createElement('img');
                 checkOutImage.setAttribute('src', checkOut.dataUrl);
                 checkOutParagraph.appendChild(checkOutImage);
+                const header = document.querySelector('h1');
+                header.innerText = header.innerText + ' ' + construction;
             }
             const searchParams = new URLSearchParams(location.search);
             const construction = searchParams.get('construction');
