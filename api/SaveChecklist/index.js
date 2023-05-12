@@ -45,6 +45,7 @@ module.exports = async function (context, req) {
 	let nameOfConstruction = '';
 	let date = '';
 	let mailAddress = '';
+	let secondMailAddress = '';
 	let hasToRepair = false;
 
 	for (let part of parts) {
@@ -60,6 +61,9 @@ module.exports = async function (context, req) {
                 case 'mailAddress':
                     mailAddress = part.field;
                     break;
+				case 'secondMailAddress':
+					secondMailAddress = part.field;
+					break;
                 }
 		if (part.field === 'torepair') {
 		    hasToRepair = true;
@@ -72,7 +76,12 @@ module.exports = async function (context, req) {
 	    msg.cc = [mailAddress];
 	}
 
-
+	if (secondMailAddress && msg.to.filter(addr => addr === secondMailAddress).length === 0) {
+		if (!msg.cc) {
+			msg.cc = [];
+		}
+		msg.cc.push(secondMailAddress);
+	}
 
 	if (hasToRepair && nameOfConstruction) {
 	    msg.subject = 'A réparer: ' + nameOfConstruction;
