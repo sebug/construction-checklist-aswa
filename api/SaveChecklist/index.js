@@ -153,7 +153,7 @@ module.exports = async function (context, req) {
 		context.log('e-mail sent');
 		
 		context.res.status(200);
-		context.res.body = 'Checklist envoyée.';
+		context.res.body = 'Checklist envoyée. N\'oubliez pas de scanner le code QR de sortie!';
 
 		} else {
 		context.res.status(500).send("No file(s) found.");
