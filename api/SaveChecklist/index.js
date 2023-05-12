@@ -6,12 +6,15 @@ const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
     'hygrometrie': 'Hygrométrie + Température',
     'kitchen': 'Matériel électrique cuisine',
-    'water': 'Eau (robinet, WC, Douche)',
-    'access': 'Nettoyage des Accès (Entrée, Saut de Loup',
+    'water': 'Eau (robinet, WC, Douche, Lavabo)',
+    'access': 'Nettoyage des Accès (Entrée, Saut de Loup)',
     'floor': 'Remplir les grilles de sol',
-    'generator': 'Faire tourner le générateur aux. 4x/an',
+    'generator': 'Faire tourner le générateur aux. 1H ou Moteurs de la Ventilation 15minutes',
     'controllist': 'Remplir la fiche contrôle',
-    'dehumidifier': 'Contrôler déshumidificateur'
+    'dehumidifier': 'Contrôler déshumidificateur',
+	'gifas': 'Lampes Gifas/Contrôler',
+	'enveloppe': 'Contrôler l\'enveloppe de l\'Abri',
+	'joints': 'Contrôler l\'état des joints de Portes'
 };
 
 module.exports = async function (context, req) {
