@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Sorti de la construction</title>
+    </head>
+    <body>
+        <h1>Sorti de la construction</h1>
+        <p>Vous pouvez fermer cette fenêtre maintenant.</p>
+        <script>
+            let searchParams = new URLSearchParams(location.search);
+            let construction = searchParams.get('construction');
+            if (construction) {
+                document.querySelector('h1').innerText =
+                    document.querySelector('h1').innerText + ' ' + construction;
+            }
+        </script>
+    </body>
+</html>
