@@ -50,6 +50,9 @@ module.exports = async function (context, req) {
                     text: 'Arrivée à la construction ' + req.query.construction + ' à ' + d.toISOString(),
                 attachments: []
             };
+            if (process.env.SECONDARY_TO_EMAIL) {
+                msg.to.push(process.env.SECONDARY_TO_EMAIL);
+            }
             const sendRes = await sgMail.send(msg);
             context.log('Send result is ' + sendRes);
         } catch (sendException) {
