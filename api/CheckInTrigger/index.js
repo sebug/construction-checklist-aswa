@@ -50,8 +50,10 @@ module.exports = async function (context, req) {
                     text: 'Arrivée à la construction ' + req.query.construction + ' à ' + d.toISOString(),
                 attachments: []
             };
-            await sgMail.send(msg);
+            const sendRes = await sgMail.send(msg);
+            context.log('Send result is ' + sendRes);
         } catch (sendException) {
+            context.log('error sending mail ' + sendException);
             context.log(sendException);
             // On va quand-même rediriger
         }
