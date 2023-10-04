@@ -91,12 +91,16 @@ module.exports = async function (context, req) {
 		let mailAddress = '';
 		let secondMailAddress = '';
 		let hasToRepair = false;
+		let checklistEntity = {
+			rowKey: new Date().toISOString()
+		};
 
 		for (let part of parts) {
 			if (part && part.name) {
 					switch (part.name) {
 					case 'nameOfConstruction':
 						nameOfConstruction = new Buffer(part.field, 'ascii').toString('utf8');
+						checklistEntity.partitionKey = nameOfConstruction;
 						msg.subject = msg.subject + ' ' + nameOfConstruction;
 						break;
 					case 'accessCode':
@@ -162,6 +166,7 @@ module.exports = async function (context, req) {
 				} else {
 				html += '<p>' + part.field + '</p>';
 				}
+				checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
 			} else if (fieldCodeToFieldName[part.name]) {
 				let fieldText = part.field;
 				if (fieldText === 'ok') {
@@ -169,6 +174,8 @@ module.exports = async function (context, req) {
 				} else if (fieldText === 'torepair') {
 				fieldText = 'À réparer';
 				}
+				checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
+
 						const innerText = fieldCodeToFieldName[part.name] +
 				': ' + fieldText;
 						text += innerText + '\n';
@@ -176,6 +183,8 @@ module.exports = async function (context, req) {
 			} else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
 				const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
 				context.log('Got photo for ' + nonPhotoName);
+
+				// TODO: store photo in blob storage
 
 				let resizedBuffer = part.data;
 				try {
