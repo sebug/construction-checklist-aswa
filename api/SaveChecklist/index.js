@@ -1,6 +1,7 @@
 const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail');
 const sharp = require('sharp');
+const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } = require("@azure/data-tables");
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -17,8 +18,47 @@ const fieldCodeToFieldName = {
 	'joints': 'Contrôler l\'état des joints de Portes'
 };
 
+const checkAccessCodeValidity = async (context, construction, accessCode) => {
+    const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
+    const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
+    const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
+
+    try {
+        const url = 'https://' + account + '.table.' + suffix;
+
+        const credential = new AzureNamedKeyCredential(account, accountKey);
+        const serviceClient = new TableServiceClient(
+            url,
+            credential
+        );
+    
+        const tableName = 'constructions';
+        await serviceClient.createTable(tableName, {
+            onResponse: (response) => {
+                if (response.status === 409) {
+                    context.log('Table constructions already exists');
+                }
+            }
+        });
+    
+        const tableClient = new TableClient(url, tableName, credential);
+        const rowKey = construction.toLowerCase();
+
+        let entityResult = await tableClient.getEntity('prod', rowKey);
+        if (!entityResult) {
+            return false;
+        }
+        return Number(entityResult.AccessCode) === Number(accessCode);
+    } catch (err) {
+        context.log(err);
+        return false;
+    }
+};
+
+
 module.exports = async function (context, req) {
 	try {
+
 		context.log("Starting sending report e-mail");
 
 		const body = req.body;
@@ -58,6 +98,16 @@ module.exports = async function (context, req) {
 					case 'nameOfConstruction':
 						nameOfConstruction = new Buffer(part.field, 'ascii').toString('utf8');
 						msg.subject = msg.subject + ' ' + nameOfConstruction;
+						break;
+					case 'accessCode':
+						let isValid = await checkAccessCodeValidity(context, nameOfConstruction, new Buffer(part.field, 'ascii').toString('utf8'));
+						if (!isValid) {
+							context.res = {
+								status: 401,
+								body: 'Mauvais code d\'accès, veuillez reessayer.'
+							};
+							return;
+						}
 						break;
 					case 'date':
 						date = part.field;
