@@ -102,13 +102,13 @@ module.exports = async function (context, req) {
 					case 'accessCode':
 						let isValid = await checkAccessCodeValidity(context, nameOfConstruction, new Buffer(part.field, 'ascii').toString('utf8'));
 						if (!isValid) {
-							context.res.status(401)
-							.headers({
-								'Content-Type': 'text/html; charset=utf-8'
-							})
-							.send(
-								'Mauvais code d\'accès, <a href="." onclick="javascript:history.back();return false">veuillez reessayer</a>.'
-							);
+							context.res = {
+								status: 401,
+								headers: {
+									'Content-Type': 'text/html; charset=utf-8'
+								},
+								body: 'Mauvais code d\'accès, <a href="." onclick="javascript:history.back();return false">veuillez reessayer</a>.'
+							};
 							return;
 						}
 						break;
