@@ -30,7 +30,7 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
         if (!entityResult) {
             return false;
         }
-        return entityResult;
+        return JSON.stringify(entityResult);
     } catch (err) {
         context.log(err);
         return false;
