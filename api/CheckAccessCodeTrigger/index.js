@@ -7,8 +7,7 @@ module.exports = async function (context, req) {
     context.log(`Checking with construction ${construction} and access code ${accessCode}`);
 
     const responseMessage = {
-        construction,
-        accessCode
+        isValid: Number(accessCode) === 123
     };
 
     context.res = {

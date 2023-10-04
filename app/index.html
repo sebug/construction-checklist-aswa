@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="css/bootstrap.min.css" />
 	<script src="js/jquery-3.7.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+	<style>
+		.valid-access-code {
+			border: 1px solid green;
+		}
+		.valid-access-code::after {
+			content: '✅'
+		}
+		.invalid-access-code {
+			border: 1px solid red;
+		}
+	</style>
   </head>
   <body>
     <!-- Under the app dir -->
@@ -256,7 +267,44 @@
 		}
 		document.querySelector('#date').value = year + '-' + month + '-' + day;
 		const accessCodeInput = document.querySelector('#accessCode');
-		console.log(accessCodeInput);
+		const nameOfConstructionInput = document.querySelector('#nameOfConstruction');
+
+		const checkAccessCode = async () => {
+			const accessCode = accessCodeInput.value;
+			const nameOfConstruction = nameOfConstructionInput.value;
+			let isValid = false;
+			if (!accessCode || !nameOfConstruction) {
+				isValid = false;
+			} else {
+				try {
+					const response = await fetch('/api/CheckAccessCodeTrigger', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							construction,
+							accessCode
+						})
+					});
+					if (response.status !== 200) {
+						return;
+					}
+					const obj = await response.json();
+					isValid = obj.isValid;
+				} catch (err) {
+					console.log(err);
+					isValid = false;
+				}
+			}
+			if (isValid) {
+				accessCodeInput.setAttribute('class', 'valid-access-code');
+			} else {
+				accessCodeInput.setAttribute('class', 'invalid-access-code');
+			}
+		};
+		accessCodeInput.addEventListener('change', checkAccessCode);
+		nameOfConstructionInput.addEventListener('change', checkAccessCode);
 	</script>
   </body>
 </html>
