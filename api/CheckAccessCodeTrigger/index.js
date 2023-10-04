@@ -6,6 +6,8 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
     const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
 
     try {
+        const url = 'https://' + account + '.table.' + suffix;
+
         const credential = new AzureNamedKeyCredential(account, accountKey);
         const serviceClient = new TableServiceClient(
             url,
