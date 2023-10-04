@@ -1,4 +1,4 @@
-const { TableServiceClient, AzureNamedKeyCredential, TableClient } = require("@azure/data-tables");
+const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } = require("@azure/data-tables");
 
 const checkAccessCodeValidity = async (context, construction, accessCode) => {
     const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
@@ -24,18 +24,9 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
         });
     
         const tableClient = new TableClient(url, tableName, credential);
-        const rowKey = construction;
-    
-        let retrievePromise = new Promise((resolve, reject) => {
-            tableClient.retrieveEntity(tableName, 'prod', construction.toLowerCase(), (error, result, response) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(result);
-            });
-        });
-        let entityResult = await retrievePromise;
+        const rowKey = construction.toLowerCase();
+
+        let entityResult = await tableClient.getEntity('prod', rowKey);
         if (!entityResult) {
             return false;
         }
