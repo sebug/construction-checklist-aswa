@@ -1,10 +1,15 @@
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+    context.log('Checking access code...');
 
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = name
-        ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-        : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+    const construction = req.body && req.body.construction;
+    const accessCode = req.body && req.body.accessCode;
+
+    context.log(`Checking with construction ${construction} and access code ${accessCode}`);
+
+    const responseMessage = {
+        construction,
+        accessCode
+    };
 
     context.res = {
         // status: 200, /* Defaults to 200 */
