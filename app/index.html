@@ -35,7 +35,7 @@
 
 	<div class="form-group">
 		<label for="accessCode">Code d'accès</label>
-		<input type="text" class="form-control" id="accessCode" name="accessCode" required />
+		<input type="number" class="form-control" id="accessCode" name="accessCode" required />
 	</div>
 
 	<div class="form-group">
@@ -298,9 +298,9 @@
 				}
 			}
 			if (isValid) {
-				accessCodeInput.setAttribute('class', 'valid-access-code');
+				accessCodeInput.setAttribute('class', 'form-control valid-access-code');
 			} else {
-				accessCodeInput.setAttribute('class', 'invalid-access-code');
+				accessCodeInput.setAttribute('class', 'form-control invalid-access-code');
 			}
 		};
 		accessCodeInput.addEventListener('change', checkAccessCode);
