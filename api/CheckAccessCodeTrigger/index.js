@@ -30,7 +30,7 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
         if (!entityResult) {
             return false;
         }
-        return JSON.stringify(entityResult);
+        return Number(entityResult.AccessCode) === Number(accessCode);
     } catch (err) {
         context.log(err);
         return false;
@@ -48,7 +48,7 @@ module.exports = async function (context, req) {
     
 
     const responseMessage = {
-        entity: await checkAccessCodeValidity(context, construction, accessCode)
+        isValid: await checkAccessCodeValidity(context, construction, accessCode)
     };
 
     context.res = {
