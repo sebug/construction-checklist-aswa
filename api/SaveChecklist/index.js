@@ -104,7 +104,7 @@ module.exports = async function (context, req) {
 						if (!isValid) {
 							context.res = {
 								status: 401,
-								body: 'Mauvais code d\'accès, veuillez reessayer.'
+								body: 'Mauvais code d\'accès, <a href="." onclick="javascript:history.back();return false">veuillez reessayer</a>.'
 							};
 							return;
 						}
