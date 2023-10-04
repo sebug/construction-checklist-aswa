@@ -283,8 +283,8 @@
 							'Content-Type': 'application/json'
 						},
 						body: JSON.stringify({
-							construction,
-							accessCode
+							construction: nameOfConstruction,
+							accessCode: accessCode
 						})
 					});
 					if (response.status !== 200) {
