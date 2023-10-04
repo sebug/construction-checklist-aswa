@@ -73,6 +73,8 @@ module.exports = async function (context, req) {
 		context.log(JSON.stringify(parts.map(p => p.name)));
 		context.log('sharp is ' + sharp);
 
+		let shouldSendMail = true;
+
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 		const msg = {
 				to: [ process.env.TO_EMAIL ], // Change to your recipient
@@ -121,6 +123,9 @@ module.exports = async function (context, req) {
 						break;
 					case 'mailAddress':
 						mailAddress = part.field;
+						if (mailAddress.toLowerCase().indexOf('donotsend') >= 0) {
+							shouldSendMail = false;
+						}
 						break;
 					case 'secondMailAddress':
 						secondMailAddress = part.field;
@@ -211,8 +216,13 @@ module.exports = async function (context, req) {
 		msg.text = text;
 		msg.html = html;
 
-		await sgMail.send(msg);
-		context.log('e-mail sent');
+		if (shouldSendMail) {
+			await sgMail.send(msg);
+			context.log('e-mail sent');
+		} else {
+			context.log('Not sending the mail right now.');
+		}
+
 		
 		context.res.status(200);
 		context.res.body = 'Checklist envoyée. N\'oubliez pas de scanner le code QR de sortie!';
