@@ -11,9 +11,6 @@
 		.valid-access-code {
 			border: 5px solid green;
 		}
-		.valid-access-code::after {
-			content: '\xe2\x9c\x85'
-		}
 		.invalid-access-code {
 			border: 5px solid red;
 		}
@@ -36,6 +33,7 @@
 	<div class="form-group">
 		<label for="accessCode">Code d'accès</label>
 		<input type="number" class="form-control" id="accessCode" name="accessCode" required />
+		<span class="access-code-ok" style="display: none">✅</span>
 	</div>
 
 	<div class="form-group">
@@ -299,8 +297,10 @@
 			}
 			if (isValid) {
 				accessCodeInput.setAttribute('class', 'form-control valid-access-code');
+				document.querySelector('.access-code-ok').style.display = 'inline';
 			} else {
 				accessCodeInput.setAttribute('class', 'form-control invalid-access-code');
+				document.querySelector('.access-code-ok').style.display = 'none';
 			}
 		};
 		accessCodeInput.addEventListener('change', checkAccessCode);
