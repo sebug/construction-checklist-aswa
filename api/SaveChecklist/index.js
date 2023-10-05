@@ -281,6 +281,8 @@ module.exports = async function (context, req) {
 
 				let blobFileName = nameOfConstruction + '_' + (new Date().toISOString()).replaceAll(':','_')
 				.replaceAll('.', '_') + part.name + '_' + part.filename;
+				blobFileName = blobFileName.replaceAll(' ', '_')
+				.replaceAll(':', '_');
 				context.log('Blob file name is ' + blobFileName);
 				await saveBlob(context, blobFileName, resizedBuffer);
 				checklistEntity[part.name] = blobFileName;
