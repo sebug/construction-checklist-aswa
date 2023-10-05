@@ -266,7 +266,7 @@ module.exports = async function (context, req) {
 			context.log('Not sending the mail right now.');
 		}
 		
-		await insertCheckList(checkListEntity);
+		await insertCheckList(checklistEntity);
 
 		
 		context.res.status(200);
