@@ -225,7 +225,12 @@ module.exports = async function (context, req) {
 
 		
 		context.res.status(200);
-		context.res.body = 'Checklist envoyée. N\'oubliez pas de scanner le code QR de sortie!';
+		if (shouldSendMail) {
+			context.res.body = 'Checklist envoyée. N\'oubliez pas de scanner le code QR de sortie!';
+		} else {
+			context.res.body = 'Checklist seulement enregistrée.';
+		}
+
 
 		} else {
 		context.res.status(500).send("No file(s) found.");
