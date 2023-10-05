@@ -111,7 +111,7 @@ const saveBlob = async (context, blobFileName, resizedBuffer) => {
 		);
 		const containerName = 'construction-photos';
 		const containerClient = await blobServiceClient.getContainerClient(containerName);
-		const createContainerResponse = await containerClient.createContainer();
+		const createContainerResponse = await containerClient.create();
 		const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
 		const uploadResponse = await blockBlobClient.uploadData(resizedBuffer);
 	} catch (ex) {
