@@ -18,8 +18,15 @@ const fieldCodeToFieldName = {
 	'joints': 'Contrôler l\'état des joints de Portes'
 };
 
-const checkAccessCodeValidity = async (context, construction, accessCode) => {
+const isGlobalCode = (accessCode) => {
 	if (Number(accessCode) === Number(process.env.GLOBAL_CODE)) {
+		return true;
+	}
+	return false;
+};
+
+const checkAccessCodeValidity = async (context, construction, accessCode) => {
+	if (isGlobalCode(accessCode)) {
 		return true;
 	}
 
@@ -59,6 +66,7 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
     }
 };
 
+const insertCheckList = async ()
 
 module.exports = async function (context, req) {
 	try {
@@ -101,6 +109,7 @@ module.exports = async function (context, req) {
 			rowKey: new Date().toISOString()
 		};
 
+		let accessCode;
 		for (let part of parts) {
 			if (part && part.name) {
 					switch (part.name) {
@@ -110,7 +119,8 @@ module.exports = async function (context, req) {
 						msg.subject = msg.subject + ' ' + nameOfConstruction;
 						break;
 					case 'accessCode':
-						let isValid = await checkAccessCodeValidity(context, nameOfConstruction, new Buffer(part.field, 'ascii').toString('utf8'));
+						accessCode = new Buffer(part.field, 'ascii').toString('utf8');
+						let isValid = await checkAccessCodeValidity(context, nameOfConstruction, accessCode);
 						if (!isValid) {
 							context.res = {
 								status: 401,
@@ -139,6 +149,10 @@ module.exports = async function (context, req) {
 				hasToRepair = true;
 			}
 				}
+		}
+
+		if (isGlobalCode(accessCode)) {
+			msg.subject = 'Cours ' + msg.subject;
 		}
 
 		// Send to ourselves just in case
