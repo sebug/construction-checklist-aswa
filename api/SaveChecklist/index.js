@@ -312,7 +312,7 @@ module.exports = async function (context, req) {
 
 
 		} else {
-		context.res.status(500).send("No file(s) found.");
+			context.res.status(500).send("No file(s) found.");
 		}
 	} catch (sendException) {
 		context.log(sendException);
