@@ -66,7 +66,32 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
     }
 };
 
-const insertCheckList = async ()
+const insertCheckList = async (checkListEntity) => {
+	const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
+    const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
+    const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
+
+    const url = 'https://' + account + '.table.' + suffix;
+
+	const credential = new AzureNamedKeyCredential(account, accountKey);
+	const serviceClient = new TableServiceClient(
+		url,
+		credential
+	);
+
+	const tableName = 'checklists';
+	await serviceClient.createTable(tableName, {
+		onResponse: (response) => {
+			if (response.status === 409) {
+				context.log('Table checklists already exists');
+			}
+		}
+	});
+
+	const tableClient = new TableClient(url, tableName, credential);
+
+	await tableClient.createEntity(entity);
+};
 
 module.exports = async function (context, req) {
 	try {
@@ -240,6 +265,8 @@ module.exports = async function (context, req) {
 		} else {
 			context.log('Not sending the mail right now.');
 		}
+
+		insertCheckList(checkListEntity);
 
 		
 		context.res.status(200);
