@@ -2,6 +2,7 @@ const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail');
 const sharp = require('sharp');
 const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } = require("@azure/data-tables");
+const { BlobServiceClient } = require("@azure/storage-blob");
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -91,6 +92,31 @@ const insertCheckList = async (context, checkListEntity) => {
 	const tableClient = new TableClient(url, tableName, credential);
 
 	await tableClient.createEntity(checkListEntity);
+};
+
+const saveBlob = async (context, blobFileName, resizedBuffer) => {
+	context.log('Saving blob ' + blobFileName);
+
+	try {
+		const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
+		const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
+		const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
+	
+		const url = 'https://' + account + '.table.' + suffix;
+	
+		const credential = new AzureNamedKeyCredential(account, accountKey);
+		const blobServiceClient = new BlobServiceClient(
+				url,
+				credential
+		);
+		const containerName = 'construction-photos';
+		const containerClient = await blobServiceClient.getContainerClient(containerName);
+		const createContainerResponse = await containerClient.createContainer();
+		const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
+		const uploadResponse = await blockBlobClient.uploadData(resizedBuffer);
+	} catch (ex) {
+		context.log(ex);
+	}
 };
 
 module.exports = async function (context, req) {
@@ -256,6 +282,8 @@ module.exports = async function (context, req) {
 				let blobFileName = nameOfConstruction + '_' + (new Date().toISOString()).replaceAll(':','_')
 				.replaceAll('.', '_') + part.name + '_' + part.filename;
 				context.log('Blob file name is ' + blobFileName);
+				await saveBlob(context, blobFileName, resizedBuffer);
+				checklistEntity[part.name] = blobFileName;
 			}
 				}
 		}
