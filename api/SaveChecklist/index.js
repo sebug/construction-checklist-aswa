@@ -252,6 +252,10 @@ module.exports = async function (context, req) {
 				disposition: 'inline'
 				});
 				html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
+
+				let blobFileName = construction + '_' + (new Date().toISOString()).replaceAll(':','_')
+				.replaceAll('.', '_') + part.name + '_' + part.filename;
+				context.log('Blob file name is ' + blobFileName);
 			}
 				}
 		}
