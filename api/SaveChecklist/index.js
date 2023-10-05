@@ -2,7 +2,13 @@ const multipart = require('multipart-formdata');
 const sgMail = require('@sendgrid/mail');
 const sharp = require('sharp');
 const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } = require("@azure/data-tables");
-const { BlobServiceClient } = require("@azure/storage-blob");
+const { BlobServiceClient, 
+    generateAccountSASQueryParameters, 
+    AccountSASPermissions, 
+    AccountSASServices,
+    AccountSASResourceTypes,
+    StorageSharedKeyCredential,
+    SASProtocol } = require("@azure/storage-blob");
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -104,14 +110,13 @@ const saveBlob = async (context, blobFileName, resizedBuffer) => {
 	
 		const url = 'https://' + account + '.blob.' + suffix;
 	
-		const credential = new AzureNamedKeyCredential(account, accountKey);
+		const sasToken = process.env.IMAGE_STORAGE_SAS_TOKEN;
 		const blobServiceClient = new BlobServiceClient(
-				url,
-				credential
+				url + '?' + sasToken,
+				null
 		);
 		const containerName = 'construction-photos';
 		const containerClient = await blobServiceClient.getContainerClient(containerName);
-		const createContainerResponse = await containerClient.create();
 		const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
 		const uploadResponse = await blockBlobClient.uploadData(resizedBuffer);
 	} catch (ex) {
