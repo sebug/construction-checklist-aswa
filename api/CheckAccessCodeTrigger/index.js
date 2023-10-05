@@ -1,6 +1,10 @@
 const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } = require("@azure/data-tables");
 
 const checkAccessCodeValidity = async (context, construction, accessCode) => {
+	if (Number(accessCode) === Number(process.env.GLOBAL_CODE)) {
+		return true;
+	}
+
     const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
     const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
     const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
