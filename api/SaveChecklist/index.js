@@ -90,7 +90,7 @@ const insertCheckList = async (checkListEntity) => {
 
 	const tableClient = new TableClient(url, tableName, credential);
 
-	await tableClient.createEntity(entity);
+	await tableClient.createEntity(checkListEntity);
 };
 
 module.exports = async function (context, req) {
