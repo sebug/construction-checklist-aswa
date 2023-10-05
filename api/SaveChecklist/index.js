@@ -66,7 +66,7 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
     }
 };
 
-const insertCheckList = async (checkListEntity) => {
+const insertCheckList = async (context, checkListEntity) => {
 	const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
     const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
     const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
@@ -270,7 +270,7 @@ module.exports = async function (context, req) {
 			context.log('Not sending the mail right now.');
 		}
 		
-		await insertCheckList(checklistEntity);
+		await insertCheckList(context, checklistEntity);
 
 		
 		context.res.status(200);
