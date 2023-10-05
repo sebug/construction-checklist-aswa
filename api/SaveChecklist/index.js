@@ -102,7 +102,7 @@ const saveBlob = async (context, blobFileName, resizedBuffer) => {
 		const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
 		const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
 	
-		const url = 'https://' + account + '.table.' + suffix;
+		const url = 'https://' + account + '.blob.' + suffix;
 	
 		const credential = new AzureNamedKeyCredential(account, accountKey);
 		const blobServiceClient = new BlobServiceClient(
@@ -309,7 +309,6 @@ module.exports = async function (context, req) {
 		} else {
 			context.res.body = 'Checklist seulement enregistrée.';
 		}
-
 
 		} else {
 			context.res.status(500).send("No file(s) found.");
