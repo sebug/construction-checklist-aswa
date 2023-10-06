@@ -90,6 +90,13 @@ const compressImage = async (file, { quality = 1, type = file.type }) => {
     return fileToReturn;
 };
 
+const updateFileInfoText = (fileInput, files) => {
+    const infoToFill = fileInput.nextElementSibling;
+    if (infoToFill) {
+        infoToFill.innerHTML = files.length + ' fichier(s) selectionnés';
+    }
+};
+
 const fileInputs = Array.from(document.querySelectorAll('input[type="file"]'));
 for (const fileInput of fileInputs) {
     fileInput.addEventListener('change', async (e) => {
@@ -123,5 +130,6 @@ for (const fileInput of fileInputs) {
 
         // Set value of the file input to our new files list
         e.target.files = dataTransfer.files;
+        updateFileInfoText(e.target);
     });
 }
