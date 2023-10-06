@@ -141,6 +141,8 @@ module.exports = async function (context, req) {
 		context.log(JSON.stringify(parts.map(p => p.name)));
 		context.log('sharp is ' + sharp);
 
+		let photoCountPerFieldName = {};
+
 		let shouldSendMail = true;
 
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -237,62 +239,69 @@ module.exports = async function (context, req) {
 			`;
 		for (let part of parts) {
 			if (part && part.name) {
-			if (part.name.indexOf('Comments') >= 0) {
-						// always add
-						text += part.field + '\n';
-				if (part.field) {
-				html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8') + '</p>';
-				} else {
-				html += '<p>' + part.field + '</p>';
+				if (part.name.indexOf('Comments') >= 0) {
+							// always add
+							text += part.field + '\n';
+					if (part.field) {
+					html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8') + '</p>';
+					} else {
+					html += '<p>' + part.field + '</p>';
+					}
+					checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
+				} else if (fieldCodeToFieldName[part.name]) {
+					let fieldText = part.field;
+					if (fieldText === 'ok') {
+					fieldText = 'Rien à signaler';
+					} else if (fieldText === 'torepair') {
+					fieldText = 'À réparer';
+					}
+					checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
+
+							const innerText = fieldCodeToFieldName[part.name] +
+					': ' + fieldText;
+							text += innerText + '\n';
+							html += '<p>' + innerText + '</p>';
+				} else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
+					let nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
+					context.log('Got photo for ' + nonPhotoName);
+
+					let photoCount = photoCountPerFieldName[part.name];
+					if (!photoCount) {
+						photoCount = 1;
+					} else {
+						photoCount += 1;
+					}
+					photoCountPerFieldName[part.name] = photoCount;
+					nonPhotoName = "" + photoCount + nonPhotoName;
+
+					let resizedBuffer = part.data;
+					try {
+
+					resizedBuffer = await sharp(part.data).resize({ width: 480 }).toBuffer();
+					} catch (e) {
+					context.log('Did not manage to resize image, attaching original');
+					resizedBuffer = part.data;
+					}
+					
+					
+					msg.attachments.push({
+					filename: "" + photoCount + part.filename,
+					contentType: part.type,
+					content: resizedBuffer.toString('base64'),
+					content_id: nonPhotoName + 'cid',
+					disposition: 'inline'
+					});
+					html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
+
+					let blobFileName = nameOfConstruction + '_' + (new Date().toISOString()).replaceAll(':','_')
+					.replaceAll('.', '_') + part.name + '_' + photoCount + part.filename;
+					blobFileName = blobFileName.replaceAll(' ', '_')
+					.replaceAll(':', '_');
+					context.log('Blob file name is ' + blobFileName);
+					await saveBlob(context, blobFileName, resizedBuffer);
+					checklistEntity[part.name + (photoCount === 1 ? "" : photoCount)] = blobFileName;
 				}
-				checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
-			} else if (fieldCodeToFieldName[part.name]) {
-				let fieldText = part.field;
-				if (fieldText === 'ok') {
-				fieldText = 'Rien à signaler';
-				} else if (fieldText === 'torepair') {
-				fieldText = 'À réparer';
-				}
-				checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
-
-						const innerText = fieldCodeToFieldName[part.name] +
-				': ' + fieldText;
-						text += innerText + '\n';
-						html += '<p>' + innerText + '</p>';
-			} else if (part.name && part.name.indexOf('Photo') >= 0 && part.filename && part.data) {
-				const nonPhotoName = part.name.substring(0, part.name.indexOf('Photo'));
-				context.log('Got photo for ' + nonPhotoName);
-
-				// TODO: store photo in blob storage
-
-				let resizedBuffer = part.data;
-				try {
-
-				resizedBuffer = await sharp(part.data).resize({ width: 480 }).toBuffer();
-				} catch (e) {
-				context.log('Did not manage to resize image, attaching original');
-				resizedBuffer = part.data;
-				}
-				
-				
-				msg.attachments.push({
-				filename: part.filename,
-				contentType: part.type,
-				content: resizedBuffer.toString('base64'),
-				content_id: nonPhotoName + 'cid',
-				disposition: 'inline'
-				});
-				html += '<p><img src="cid:' + nonPhotoName + 'cid" /></p>';
-
-				let blobFileName = nameOfConstruction + '_' + (new Date().toISOString()).replaceAll(':','_')
-				.replaceAll('.', '_') + part.name + '_' + part.filename;
-				blobFileName = blobFileName.replaceAll(' ', '_')
-				.replaceAll(':', '_');
-				context.log('Blob file name is ' + blobFileName);
-				await saveBlob(context, blobFileName, resizedBuffer);
-				checklistEntity[part.name] = blobFileName;
 			}
-				}
 		}
 
 		msg.text = text;
