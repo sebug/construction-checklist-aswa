@@ -130,6 +130,6 @@ for (const fileInput of fileInputs) {
 
         // Set value of the file input to our new files list
         e.target.files = dataTransfer.files;
-        updateFileInfoText(e.target);
+        updateFileInfoText(e.target, dataTransfer.files);
     });
 }
