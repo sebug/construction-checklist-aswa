@@ -67,7 +67,7 @@ const compressImage = async (file, { quality = 1, type = file.type }) => {
     let width = imageBitmap.width;
     let height = imageBitmap.height;
     if (width > maxWidth) {
-        height = height * (maxWidth / width);
+        height = Math.floor(height * (maxWidth / width));
         width = maxWidth;
     }
 
@@ -84,9 +84,10 @@ const compressImage = async (file, { quality = 1, type = file.type }) => {
     );
 
     // Turn Blob into File
-    return new File([blob], file.name, {
+    let fileToReturn = new File([blob], file.name, {
         type: blob.type,
     });
+    return fileToReturn;
 };
 
 const fileInputs = Array.from(document.querySelectorAll('input[type="file"]'));
