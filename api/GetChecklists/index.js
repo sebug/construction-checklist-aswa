@@ -15,8 +15,14 @@ module.exports = async function (context, req) {
         return;
     }
 
+    let expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 365);
+
     context.res = {
         // status: 200, /* Defaults to 200 */
-        body: 'List goes here'
+        body: 'List goes here',
+        headers: {
+            'Set-Cookie': 'accessCode=' + accessCode + '; Expires=' + expiryDate.toUTCString() + ';'
+        }
     };
 }
