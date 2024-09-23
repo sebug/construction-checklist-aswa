@@ -4,9 +4,10 @@ module.exports = async function (context, req) {
     context.log('Get checklists function triggered.');
 
     let accessCode = req.body && req.body.accessCode;
-    // TODO: get from cookie as well
-    let cookieDict = parseCookies(req);
-    context.log('Request cookies are: ' + cookieDict.accessCode);
+    if (!accessCode) {
+        let cookieDict = parseCookies(req);
+        accessCode = cookieDict.accessCode;
+    }
 
     if (!accessCode || crypto.createHash('sha256').update(accessCode
         + process.env.LIST_ACCESS_CODE_SALT).digest('hex') !== process.env.LIST_ACCESS_CODE_HASH) {
