@@ -51,15 +51,9 @@ function constructCheckinsDetail(getListObject) {
 
     const headerTr = document.createElement('tr');
 
-    const dateTh = document.createElement('th');
-    dateTh.innerHTML = 'Date';
-
-    headerTr.appendChild(dateTh);
-
-    const constructionTh = document.createElement('th');
-    constructionTh.innerHTML = 'Construction';
-
-    headerTr.appendChild(constructionTh);
+    headerTr.appendChild(headerTh('Date'));
+    headerTr.appendChild(headerTh('Construction'));
+    headerTr.appendChild(headerTh('Illumination'));
 
     thead.appendChild(headerTr);
 
@@ -80,6 +74,12 @@ function constructCheckinsDetail(getListObject) {
     return details;
 }
 
+function HeaderTh(text) {
+    const th = document.createElement('th');
+    th.innerHTML = text;
+    return th;
+}
+
 function constructChecklistRow(checklist) {
     const tr = document.createElement('tr');
 
@@ -93,7 +93,19 @@ function constructChecklistRow(checklist) {
 
     tr.appendChild(constructionTd);
 
+    tr.appendChild(checklistTd(checklist.illumination));
+
     return tr;
+}
+
+function checklistTd(value) {
+    const td = document.createElement('td');
+    if (value === 'ok') {
+        td.innerHTML = '✅';
+    } else if (value === 'torepair') {
+        td.innerHTML = '❌';
+    }
+    return td;
 }
 
 getList();
