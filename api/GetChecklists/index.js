@@ -56,7 +56,7 @@ module.exports = async function (context, req) {
         var constructionsIter = await tableClient.listEntities();
 
         let constructionsList = [];
-        for await (const entity of entitiesIter) {
+        for await (const entity of constructionsIter) {
             constructionsList.push(entity);
         }
 
