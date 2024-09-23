@@ -54,8 +54,26 @@ module.exports = async function (context, req) {
             if (process.env.SECONDARY_TO_EMAIL) {
                 msg.to.push(process.env.SECONDARY_TO_EMAIL);
             }
-            const sendRes = await sgMail.send(msg);
-            context.log('Send result is ' + sendRes);
+            if (process.env.USE_NODEMAILER === 'true') {
+                const transporter = nodemailer.createTransport({
+                    host: process.env.NODEMAILER_SMTP_HOST,
+                    port: Number(process.env.NODEMAILER_SMTP_PORT),
+                    secure: false,
+                    auth: {
+                    user: process.env.NODEMAILER_SMTP_USERNAME,
+                    pass: process.env.NODEMAILER_SMTP_PASSWORD
+                    }
+                });
+                const messageForNodemailer = {
+                    from: process.env.FROM_EMAIL,
+                    to: msg.to.join(', '),
+                    subject: 'Test Nodemailer ' + msg.subject,
+                    text: msg.text
+                };
+            } else {
+                const sendRes = await sgMail.send(msg);
+                context.log('Send result is ' + sendRes);
+            }
         } catch (sendException) {
             context.log('error sending mail ' + sendException);
             context.log(sendException);
