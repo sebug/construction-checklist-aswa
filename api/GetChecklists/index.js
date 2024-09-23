@@ -34,6 +34,8 @@ module.exports = async function (context, req) {
         const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
         const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
 
+        const url = 'https://' + account + '.table.' + suffix;
+
         const credential = new AzureNamedKeyCredential(account, accountKey);
         const serviceClient = new TableServiceClient(
             url,
@@ -76,8 +78,6 @@ module.exports = async function (context, req) {
             body: '' + e
         };
     }
-
-    
 }
 
 function parseCookies (request) {
