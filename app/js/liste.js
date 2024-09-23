@@ -63,6 +63,7 @@ function constructCheckinsDetail(getListObject) {
     details.appendChild(summary);
 
     const table = document.createElement('table');
+    table.setAttribute('class', 'checklist-table');
 
     const thead = document.createElement('thead');
 
