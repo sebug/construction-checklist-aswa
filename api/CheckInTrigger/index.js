@@ -67,7 +67,7 @@ module.exports = async function (context, req) {
                 const messageForNodemailer = {
                     from: process.env.NODEMAILER_SMTP_USERNAME, // Have to use the same from address as the message we are sending
                     to: msg.to.join(', '),
-                    subject: 'Test Nodemailer ' + msg.subject,
+                    subject: msg.subject,
                     text: msg.text
                 };
                 await transporter.sendMail(messageForNodemailer);
