@@ -5,7 +5,7 @@ module.exports = async function (context, req) {
 
     let accessCode = req.body && req.body.accessCode;
     // TODO: get from cookie as well
-    context.log('Request cookies are: ' + JSON.stringify(req.headers));
+    context.log('Request cookies are: ' + JSON.stringify(req.headers.cookie || ''));
 
     if (!accessCode || crypto.createHash('sha256').update(accessCode
         + process.env.LIST_ACCESS_CODE_SALT).digest('hex') !== process.env.LIST_ACCESS_CODE_HASH) {
