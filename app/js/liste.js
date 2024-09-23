@@ -33,6 +33,22 @@ async function getList() {
     }
     const getListObject = await getListResponse.json();
 
+    const oneHour = 3600000;
+    for (const checklist of getListObject.checklist) {
+        const matchingCheckins = getListObject.checkins.filter(dto =>
+            dto.Construction.toLowerCase() === checklist.partitionKey.toLowerCase()
+        ).filter(dto => Math.abs(new Date(checklist.timestamp) - new Date(dto.timestamp)) < oneHour * 2);
+        const matchingCheckouts = getListObject.checkouts.filter(dto =>
+            dto.Construction.toLowerCase() === checklist.partitionKey.toLowerCase()
+        ).filter(dto => Math.abs(new Date(checklist.timestamp) - new Date(dto.timestamp)) < oneHour * 2);
+        if (matchingCheckins.length) {
+            checklist.checkin = matchingCheckins[matchingCheckins.length - 1].timestamp;
+        }
+        if (matchingCheckouts.length) {
+            checklist.checkout = matchingCheckouts[0].timestamp;
+        }
+    }
+
     const checklistsDetail = constructCheckinsDetail(getListObject);
 
     mainElement.appendChild(checklistsDetail);
@@ -53,6 +69,8 @@ function constructCheckinsDetail(getListObject) {
 
     headerTr.appendChild(headerTh('Date'));
     headerTr.appendChild(headerTh('Construction'));
+    headerTr.appendChild(headerTh('Scan Entrée'));
+    headerTr.appendChild(headerTh('Scan Sortie'));
     headerTr.appendChild(headerTh('Illumination'));
 
     thead.appendChild(headerTr);
@@ -93,9 +111,24 @@ function constructChecklistRow(checklist) {
 
     tr.appendChild(constructionTd);
 
+    tr.appendChild(timeTD(checklist.checkin));
+    tr.appendChild(timeTD(checklist.checkout));
+
     tr.appendChild(checklistTd(checklist.illumination));
 
     return tr;
+}
+
+function timeTD(date) {
+    const td = document.createElement('td');
+
+    if (date) {
+        td.innerHTML = new Date(date).toLocaleTimeString();
+    } else {
+        td.innerHTML = '⚠️';
+    }
+
+    return td;
 }
 
 function checklistTd(value) {
@@ -104,6 +137,8 @@ function checklistTd(value) {
         td.innerHTML = '✅';
     } else if (value === 'torepair') {
         td.innerHTML = '❌';
+    } else {
+        td.innerHTML = '❓';
     }
     return td;
 }
