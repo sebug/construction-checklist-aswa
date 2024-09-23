@@ -34,7 +34,7 @@ async function getList() {
     const getListObject = await getListResponse.json();
 
     const oneHour = 3600000;
-    for (const checklist of getListObject.checklist) {
+    for (const checklist of getListObject.checklists) {
         const matchingCheckins = getListObject.checkins.filter(dto =>
             dto.Construction.toLowerCase() === checklist.partitionKey.toLowerCase()
         ).filter(dto => Math.abs(new Date(checklist.timestamp) - new Date(dto.timestamp)) < oneHour * 2);
