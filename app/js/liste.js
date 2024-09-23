@@ -44,9 +44,6 @@ function constructCheckinsDetail(getListObject) {
     const summary = document.createElement('summary');
     summary.innerHTML = 'Contrôles des Constructions';
     details.appendChild(summary);
-    const descriptionParagraph = document.createElement('p');
-    descriptionParagraph.innerHTML = 'Ci-dessous vous trouvez une liste des contrôles des constructions';
-    details.appendChild(descriptionParagraph);
 
     const table = document.createElement('table');
 
@@ -72,9 +69,31 @@ function constructCheckinsDetail(getListObject) {
 
     table.appendChild(tbody);
 
+    for (const checklist of getListObject.checklists) {
+        const checklistRow = constructChecklistRow(checklist);
+
+        tbody.appendChild(checklistRow);
+    }
+
     details.appendChild(table);
 
     return details;
+}
+
+function constructChecklistRow(checklist) {
+    const tr = document.createElement('tr');
+
+    const dateTd = document.createElement('td');
+    dateTd.innerHTML = new Date(checklist.timestamp).toLocaleString();
+
+    tr.appendChild(dateTd);
+
+    const constructionTd = document.createElement('td');
+    constructionTd.innerHTML = checklist.partitionKey;
+
+    tr.appendChild(constructionTd);
+
+    return tr;
 }
 
 getList();
