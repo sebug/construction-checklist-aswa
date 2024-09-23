@@ -1,6 +1,7 @@
 const { TableServiceClient, AzureNamedKeyCredential, TableClient } = require("@azure/data-tables");
 const sgMail = require('@sendgrid/mail');
 const sharp = require('sharp');
+const nodemailer = require('nodemailer');
 
 module.exports = async function (context, req) {
     try {
@@ -53,8 +54,27 @@ module.exports = async function (context, req) {
             if (process.env.SECONDARY_TO_EMAIL) {
                 msg.to.push(process.env.SECONDARY_TO_EMAIL);
             }
-            const sendRes = await sgMail.send(msg);
-            context.log('Send result is ' + sendRes);
+            if (process.env.USE_NODEMAILER === 'true') {
+                const transporter = nodemailer.createTransport({
+                    host: process.env.NODEMAILER_SMTP_HOST,
+                    port: Number(process.env.NODEMAILER_SMTP_PORT),
+                    secure: false,
+                    auth: {
+                    user: process.env.NODEMAILER_SMTP_USERNAME,
+                    pass: process.env.NODEMAILER_SMTP_PASSWORD
+                    }
+                });
+                const messageForNodemailer = {
+                    from: process.env.NODEMAILER_SMTP_USERNAME, // Have to use the same from address as the message we are sending
+                    to: msg.to.join(', '),
+                    subject: 'From Nodemailer: ' + msg.subject,
+                    text: msg.text
+                };
+                await transporter.sendMail(messageForNodemailer);
+            } else {
+                const sendRes = await sgMail.send(msg);
+                context.log('Send result is ' + sendRes);
+            }
         } catch (sendException) {
             context.log('error sending mail ' + sendException);
             context.log(sendException);
