@@ -70,24 +70,64 @@ function constructCheckinsDetail(getListObject) {
 
     const headingsToEntry = [
         {
-            heading: 'Illumination',
-            entry: o => o.illumination
+            heading: 'Éclairage',
+            entry: o => o.illumination,
+            detail: o => o.illuminationComments
         },
         {
-            heading: 'Hygrométrie',
-            entry: o => o.hygrometrie
+            heading: 'Hygrométrie + Temp.',
+            entry: o => o.hygrometrie,
+            detail: o => o.hygrometrieComments
         },
         {
-            heading: 'Cuisine',
-            entry: o => o.kitchen
+            heading: 'Matériel él. cuisine',
+            entry: o => o.kitchen,
+            detail: o => o.kitchenComments
         },
         {
             heading: 'Eau',
-            entry: o => o.water
+            entry: o => o.water,
+            detail: o => o.waterComments
         },
         {
-            heading: 'Accèes',
-            entry: o => o.access
+            heading: 'Accès',
+            entry: o => o.access,
+            detail: o => o.accessComments
+        },
+        {
+            heading: 'Grilles de Sol',
+            entry: o => o.floor,
+            detail: o => o.floorComments
+        },
+        {
+            heading: 'Générateur',
+            entry: o => o.generator,
+            detail: o => o.generatorComments
+        },
+        {
+            heading: 'Liste de contrôle',
+            entry: o => o.controllist,
+            detail: o => o.controllistComments
+        },
+        {
+            heading: 'Déshumidificateur',
+            entry: o => o.dehumidifier,
+            detail: o => o.dehumidifierComments
+        },
+        {
+            heading: 'Lampes Gifas',
+            entry: o => o.gifas,
+            detail: o => o.gifasComments
+        },
+        {
+            heading: 'Enveloppe',
+            entry: o => o.enveloppe,
+            detail: o => o.enveloppeComments
+        },
+        {
+            heading: 'Joints',
+            entry: o => o.joints,
+            detail: o => o.jointsComments
         }
     ];
 
@@ -141,7 +181,7 @@ function constructChecklistRow(checklist, headingsToEntry) {
     tr.appendChild(timeTD(checklist.checkout));
 
     for (let headingToEntry of headingsToEntry) {
-        tr.appendChild(checklistTd(headingToEntry.entry(checklist)));
+        tr.appendChild(checklistTd(headingToEntry.entry(checklist), headingToEntry.detail(checklist)));
     }
 
     return tr;
@@ -159,7 +199,7 @@ function timeTD(date) {
     return td;
 }
 
-function checklistTd(value) {
+function checklistTd(value, detail) {
     const td = document.createElement('td');
     if (value === 'ok') {
         td.innerHTML = '✅';
@@ -168,6 +208,11 @@ function checklistTd(value) {
     } else {
         td.innerHTML = '❓';
     }
+
+    if (detail) {
+        td.setAttribute('title', detail);
+    }
+
     return td;
 }
 
