@@ -9,6 +9,7 @@ const { BlobServiceClient,
     AccountSASResourceTypes,
     StorageSharedKeyCredential,
     SASProtocol } = require("@azure/storage-blob");
+const nodemailer = require('nodemailer');
 
 const fieldCodeToFieldName = {
     'illumination': 'Éclairage (changement ampoules et néons)',
@@ -308,8 +309,37 @@ module.exports = async function (context, req) {
 		msg.html = html;
 
 		if (shouldSendMail) {
-			await sgMail.send(msg);
-			context.log('e-mail sent');
+			if (process.env.USE_NODEMAILER) {
+				const transporter = nodemailer.createTransport({
+                    host: process.env.NODEMAILER_SMTP_HOST,
+                    port: Number(process.env.NODEMAILER_SMTP_PORT),
+                    secure: false,
+                    auth: {
+                    user: process.env.NODEMAILER_SMTP_USERNAME,
+                    pass: process.env.NODEMAILER_SMTP_PASSWORD
+                    }
+                });
+				const messageForNodemailer = {
+                    from: process.env.NODEMAILER_SMTP_USERNAME, // Have to use the same from address as the message we are sending
+                    to: msg.to.join(', '),
+                    subject: 'Test nodemailer ' + msg.subject,
+                    text: msg.text,
+					html: msg.html,
+					attachments: msg.attachments.map(dto => {
+						return {
+							filename: dto.filename,
+							content: Buffer.from(dto.content, 'base64'),
+							contentType: dto.contentType,
+							contentDisposition: dto.disposition,
+							cid: dto.content_id
+						};
+					})
+                };
+                await transporter.sendMail(messageForNodemailer);
+			} else {
+				await sgMail.send(msg);
+				context.log('e-mail sent');
+			}
 		} else {
 			context.log('Not sending the mail right now.');
 		}
