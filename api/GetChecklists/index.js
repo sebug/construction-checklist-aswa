@@ -90,6 +90,10 @@ module.exports = async function (context, req) {
             checklists.push(entity);
         }
 
+        checklists.sort((a, b) => {
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+
         let resultObject = {
             constructions: constructionsList,
             checklists: checklists
