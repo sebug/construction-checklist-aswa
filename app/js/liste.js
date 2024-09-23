@@ -74,7 +74,7 @@ function constructCheckinsDetail(getListObject) {
     return details;
 }
 
-function HeaderTh(text) {
+function headerTh(text) {
     const th = document.createElement('th');
     th.innerHTML = text;
     return th;
