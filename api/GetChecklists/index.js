@@ -94,9 +94,19 @@ module.exports = async function (context, req) {
             return new Date(b.timestamp) - new Date(a.timestamp);
         });
 
+        const checkinsTableClient = new TableClient(url, 'checkins', credential);
+
+        const checkinsIter = await checkinsTableClient.listEntities();
+
+        let checkins = [];
+        for await (const entity of checkinsIter) {
+            checkins.push(entity);
+        }
+
         let resultObject = {
             constructions: constructionsList,
-            checklists: checklists
+            checklists: checklists,
+            checkins: checkins
         };
 
         context.res = {
