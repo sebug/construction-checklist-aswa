@@ -26,49 +26,58 @@ module.exports = async function (context, req) {
         return;
     }
 
-    let expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 365);
+    try {
+        let expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 365);
 
-    const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
-    const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
-    const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
+        const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
+        const accountKey = process.env.TABLES_PRIMARY_STORAGE_ACCOUNT_KEY;
+        const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
 
-    const credential = new AzureNamedKeyCredential(account, accountKey);
-    const serviceClient = new TableServiceClient(
-        url,
-        credential
-    );
+        const credential = new AzureNamedKeyCredential(account, accountKey);
+        const serviceClient = new TableServiceClient(
+            url,
+            credential
+        );
 
-    const constructionsTableName = 'constructions';
-    await serviceClient.createTable(constructionsTableName, {
-        onResponse: (response) => {
-            if (response.status === 409) {
-                context.log('Table constructions already exists');
+        const constructionsTableName = 'constructions';
+        await serviceClient.createTable(constructionsTableName, {
+            onResponse: (response) => {
+                if (response.status === 409) {
+                    context.log('Table constructions already exists');
+                }
             }
+        });
+
+        const tableClient = new TableClient(url, constructionsTableName, credential);
+
+        var constructionsIter = await tableClient.listEntities();
+
+        let constructionsList = [];
+        for await (const entity of entitiesIter) {
+            constructionsList.push(entity);
         }
-    });
 
-    const tableClient = new TableClient(url, constructionsTableName, credential);
+        let resultObject = {
+            constructions: constructionsList
+        };
 
-    var constructionsIter = await tableClient.listEntities();
-
-    let constructionsList = [];
-    for await (const entity of entitiesIter) {
-        constructionsList.push(entity);
+        context.res = {
+            // status: 200, /* Defaults to 200 */
+            body: JSON.stringify(resultObject),
+            headers: {
+                'Set-Cookie': 'accessCode=' + accessCode + '; Expires=' + expiryDate.toUTCString() + ';',
+                'Content-Type': 'application/json'
+            }
+        };
+    } catch (e) {
+        context.res = {
+            status: 500,
+            body: '' + e
+        };
     }
 
-    let resultObject = {
-        constructions: constructionsList
-    };
-
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: JSON.stringify(resultObject),
-        headers: {
-            'Set-Cookie': 'accessCode=' + accessCode + '; Expires=' + expiryDate.toUTCString() + ';',
-            'Content-Type': 'application/json'
-        }
-    };
+    
 }
 
 function parseCookies (request) {
