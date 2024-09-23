@@ -103,10 +103,28 @@ module.exports = async function (context, req) {
             checkins.push(entity);
         }
 
+        checkins = checkins.sort((a, b) => {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
+
+        const checkoutsTableClient = new TableClient(url, 'checkouts', credential);
+
+        const checkoutsIter = await checkoutsTableClient.listEntities();
+
+        let checkouts = [];
+        for await (const entity of checkoutsIter) {
+            checkouts.push(entity);
+        }
+
+        checkouts = checkouts.sort((a, b) => {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
+
         let resultObject = {
             constructions: constructionsList,
             checklists: checklists,
-            checkins: checkins
+            checkins: checkins,
+            checkouts: checkouts
         };
 
         context.res = {
