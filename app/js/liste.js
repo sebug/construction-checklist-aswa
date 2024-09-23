@@ -68,11 +68,36 @@ function constructCheckinsDetail(getListObject) {
 
     const headerTr = document.createElement('tr');
 
+    const headingsToEntry = [
+        {
+            heading: 'Illumination',
+            entry: o => o.illumination
+        },
+        {
+            heading: 'Hygrométrie',
+            entry: o => o.hygrometrie
+        },
+        {
+            heading: 'Cuisine',
+            entry: o => o.kitchen
+        },
+        {
+            heading: 'Eau',
+            entry: o => o.water
+        },
+        {
+            heading: 'Accèes',
+            entry: o => o.access
+        }
+    ];
+
     headerTr.appendChild(headerTh('Date'));
     headerTr.appendChild(headerTh('Construction'));
     headerTr.appendChild(headerTh('Scan Entrée'));
     headerTr.appendChild(headerTh('Scan Sortie'));
-    headerTr.appendChild(headerTh('Illumination'));
+    for (let headingToEntry of headingsToEntry) {
+        headerTr.appendChild(headerTh(headingToEntry.heading));
+    }
 
     thead.appendChild(headerTr);
 
@@ -83,7 +108,7 @@ function constructCheckinsDetail(getListObject) {
     table.appendChild(tbody);
 
     for (const checklist of getListObject.checklists) {
-        const checklistRow = constructChecklistRow(checklist);
+        const checklistRow = constructChecklistRow(checklist, headingsToEntry);
 
         tbody.appendChild(checklistRow);
     }
@@ -99,7 +124,7 @@ function headerTh(text) {
     return th;
 }
 
-function constructChecklistRow(checklist) {
+function constructChecklistRow(checklist, headingsToEntry) {
     const tr = document.createElement('tr');
 
     const dateTd = document.createElement('td');
@@ -115,7 +140,9 @@ function constructChecklistRow(checklist) {
     tr.appendChild(timeTD(checklist.checkin));
     tr.appendChild(timeTD(checklist.checkout));
 
-    tr.appendChild(checklistTd(checklist.illumination));
+    for (let headingToEntry of headingsToEntry) {
+        tr.appendChild(checklistTd(headingToEntry.entry(checklist)));
+    }
 
     return tr;
 }
