@@ -70,6 +70,7 @@ module.exports = async function (context, req) {
                     subject: 'Test Nodemailer ' + msg.subject,
                     text: msg.text
                 };
+                await transporter.sendMail(messageForNodemailer);
             } else {
                 const sendRes = await sgMail.send(msg);
                 context.log('Send result is ' + sendRes);
