@@ -91,7 +91,7 @@ module.exports = async function (context, req) {
         }
 
         checklists.sort((a, b) => {
-            return new Date(a.timestamp) - new Date(b.timestamp);
+            return new Date(b.timestamp) - new Date(a.timestamp);
         });
 
         let resultObject = {
