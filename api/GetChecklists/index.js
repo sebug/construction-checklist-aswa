@@ -79,8 +79,20 @@ module.exports = async function (context, req) {
             return 0;
         });
 
+        const checklistTableName = 'checklists';
+
+        const checklistsTableClient = new TableClient(url, checklistTableName, credential);
+
+        const checklistsIter = await checklistsTableClient.listEntities();
+
+        let checklists = [];
+        for await (const entity of checklistsIter) {
+            checklists.push(entity);
+        }
+
         let resultObject = {
-            constructions: constructionsList
+            constructions: constructionsList,
+            checklists: checklists
         };
 
         context.res = {
