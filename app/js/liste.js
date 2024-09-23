@@ -40,7 +40,8 @@ async function getList() {
         ).filter(dto => Math.abs(new Date(checklist.timestamp) - new Date(dto.timestamp)) < oneHour * 2);
         const matchingCheckouts = getListObject.checkouts.filter(dto =>
             dto.Construction.toLowerCase() === checklist.partitionKey.toLowerCase()
-        ).filter(dto => Math.abs(new Date(checklist.timestamp) - new Date(dto.timestamp)) < oneHour * 2);
+        ).filter(dto => Math.abs(new Date(checklist.timestamp) - new Date(dto.timestamp)) < oneHour * 2 &&
+            new Date(checklist.timestamp) < new Date(dto.timestamp));
         if (matchingCheckins.length) {
             checklist.checkin = matchingCheckins[matchingCheckins.length - 1].timestamp;
         }
