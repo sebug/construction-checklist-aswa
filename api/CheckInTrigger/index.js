@@ -1,6 +1,7 @@
 const { TableServiceClient, AzureNamedKeyCredential, TableClient } = require("@azure/data-tables");
 const sgMail = require('@sendgrid/mail');
 const sharp = require('sharp');
+const nodemailer = require('nodemailer');
 
 module.exports = async function (context, req) {
     try {
