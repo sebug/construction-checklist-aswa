@@ -270,7 +270,7 @@ function constructTimeSpent(drilldown) {
         thead.appendChild(headingTr);
         table.appendChild(thead);
 
-        const tbody = document.createElement(tbody);
+        const tbody = document.createElement('tbody');
 
         const constructions = Array.from(Object.keys(drilldown[month]));
         constructions.sort();
