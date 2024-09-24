@@ -33,6 +33,8 @@ async function getList() {
     }
     const getListObject = await getListResponse.json();
 
+    let timeSpentDrilldown = {};
+
     const oneHour = 3600000;
     for (const checklist of getListObject.checklists) {
         const matchingCheckins = getListObject.checkins.filter(dto =>
@@ -48,7 +50,26 @@ async function getList() {
         if (matchingCheckouts.length) {
             checklist.checkout = matchingCheckouts[0].timestamp;
         }
+
+        if (checklist.checkin && checklist.checkout) {
+            try {
+                let dateKey = new Date(checklist.timestamp).getFullYear() +
+                "-" + (new Date(checklist.timestamp).getMonth() + 1);
+                if (!timeSpentDrilldown[dateKey]) {
+                    timeSpentDrilldown[dateKey] = {};
+                }
+                if (!timeSpentDrilldown[dateKey][checklist.partitionKey]) {
+                    timeSpentDrilldown[dateKey][checklist.partitionKey] = 0;
+                }
+                timeSpentDrilldown[dateKey][checklist.partitionKey] +=
+                   (new Date(checklist.checkout) - new Date(checklist.checkin)) / oneHour;
+            } catch (dateE) {
+                console.log(dateE);
+            }
+        }
     }
+
+    console.log(timeSpentDrilldown);
 
     const checklistsDetail = constructCheckinsDetail(getListObject);
 
