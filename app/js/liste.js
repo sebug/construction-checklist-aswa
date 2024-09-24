@@ -73,7 +73,7 @@ async function getList() {
     console.log(timeSpentDrilldown);
 
 
-    const timeSpentElement = constructTimeSpent(drilldown);
+    const timeSpentElement = constructTimeSpent(timeSpentDrilldown);
 
     if (timeSpentElement) {
         mainElement.appendChild(timeSpentElement);
