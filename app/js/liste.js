@@ -54,7 +54,8 @@ async function getList() {
         if (checklist.checkin && checklist.checkout) {
             try {
                 let dateKey = new Date(checklist.timestamp).getFullYear() +
-                "-" + (new Date(checklist.timestamp).getMonth() + 1);
+                "-" + ((new Date(checklist.timestamp).getMonth() + 1) < 10 ? '0' : '') +
+                (new Date(checklist.timestamp).getMonth() + 1);
                 if (!timeSpentDrilldown[dateKey]) {
                     timeSpentDrilldown[dateKey] = {};
                 }
@@ -70,6 +71,13 @@ async function getList() {
     }
 
     console.log(timeSpentDrilldown);
+
+
+    const timeSpentElement = constructTimeSpent(drilldown);
+
+    if (timeSpentElement) {
+        mainElement.appendChild(timeSpentElement);
+    }
 
     const checklistsDetail = constructCheckinsDetail(getListObject);
 
@@ -236,6 +244,61 @@ function checklistTd(value, detail) {
     }
 
     return td;
+}
+
+function constructTimeSpent(drilldown) {
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.innerHTML = 'Temps passé pour le contrôle';
+    details.appendChild(summary);
+
+    const months = Array.from(Object.keys(drilldown));
+    months.sort((a, b) => b - a);
+
+    for (const month of months) {
+        const heading = document.createElement('h2');
+        heading.innerHTML = month;
+        details.appendChild(heading);
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headingTr = document.createElement('tr');
+
+        headingTr.appendChild(headerTh("Construction"));
+        headingTr.appendChild(headerTh("Heures passées"));
+
+        thead.appendChild(headingTr);
+        table.appendChild(thead);
+
+        const tbody = document.createElement(tbody);
+
+        const constructions = Array.from(Object.keys(drilldown[month]));
+        constructions.sort();
+
+        for (const construction of constructions) {
+            const tr = document.createElement('tr');
+
+            const constTd = document.createElement('td');
+            constTd.innerHTML = construction;
+
+            tr.appendChild(constTd);
+
+            const rounded = Math.round(drilldown[month][construction] * 4) / 4;
+
+            const hoursTd = document.createElement('td');
+            hoursTd.innerHTML = '' + rounded;
+
+            tr.appendChild(hoursTd);
+
+            tbody.appendChild(tr);
+        }
+
+        table.appendChild(tbody);
+
+        details.appendChild(table);
+    }
+
+    return details;
 }
 
 getList();
