@@ -26,9 +26,9 @@ module.exports = async function (context, req) {
 		);
 		const containerName = 'construction-photos';
 		const containerClient = await blobServiceClient.getContainerClient(containerName);
-		const blobClient = containerClient.getBlobClient(blobFileName);
+		const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
 
-        const downloadBlockBlobResponse = await blobClient.download();
+        const downloadBlockBlobResponse = await blockBlobClient.download();
         const downloaded = await streamToBuffer(downloadBlockBlobResponse.readableStreamBody);
 
 
