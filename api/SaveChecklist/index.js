@@ -199,9 +199,11 @@ module.exports = async function (context, req) {
 						if (mailAddress.toLowerCase().indexOf('donotsend') >= 0) {
 							shouldSendMail = false;
 						}
+						checklistEntity.mailAddress = mailAddress;
 						break;
 					case 'secondMailAddress':
 						secondMailAddress = part.field;
+						checkListEntity.secondMailAddress = secondMailAddress;
 						break;
 					}
 			if (part.field === 'torepair') {
