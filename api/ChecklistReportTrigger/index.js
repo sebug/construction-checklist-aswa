@@ -101,19 +101,6 @@ module.exports = async function (context, req) {
             }
         ];
 
-        const storageAccount = process.env.TABLES_STORAGE_ACCOUNT_NAME;
-        const storageSuffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
-
-        const storageURL = 'https://' + storageAccount + '.blob.' + storageSuffix;
-
-        const sasToken = process.env.IMAGE_STORAGE_SAS_TOKEN;
-        const blobServiceClient = new BlobServiceClient(
-                storageURL + '?' + sasToken,
-                null
-        );
-        const containerName = 'construction-photos';
-        const containerClient = await blobServiceClient.getContainerClient(containerName);
-
         const photoSuffixes = ['', '1', '2', '3', '4', '5', '6'];
 
         let expiry = new Date();
@@ -125,11 +112,7 @@ module.exports = async function (context, req) {
             for (const key of keys) {
                 const blobFileName = entity[key];
 
-                const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
-
-                entity[key + 'Link'] = await blockBlobClient.generateSasUrl({
-                    expiresOn: expiry
-                });
+                entity[key + 'Link'] = '/api/GetImageFileTrigger?blobFileName=' + blobFileName;
             }
         }
 
