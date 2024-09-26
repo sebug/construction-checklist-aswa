@@ -127,7 +127,7 @@ module.exports = async function (context, req) {
 
                 const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
 
-                entity[key + 'Link'] = blockBlobClient.generateSasUrl({
+                entity[key + 'Link'] = await blockBlobClient.generateSasUrl({
                     expiresOn: expiry
                 });
             }
