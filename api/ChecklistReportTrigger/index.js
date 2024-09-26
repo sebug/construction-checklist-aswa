@@ -123,6 +123,7 @@ module.exports = async function (context, req) {
             .filter(k => entity[k]);
 
             for (const key of keys) {
+                const blobFileName = entity[key];
 
                 const blockBlobClient = containerClient.getBlockBlobClient(blobFileName);
 
