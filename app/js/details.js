@@ -8,11 +8,10 @@ async function getDetails() {
     );
     const construction = await getEntityResponse.json();
 
-    const h2 = document.createElement('h2');
-    h2.innerHTML = 'Contrôle ' + construction.partitionKey;
+    const h1 = document.querySelector('h1');
+    h1.innerHTML = 'Contrôle ' + construction.partitionKey;
 
     const main = document.querySelector('main');
-    main.appendChild(h2);
 
     const controlDate = document.createElement('p');
     controlDate.innerHTML = 'Date de contrôle: ' + (new Date(construction.rowKey).toLocaleString());
@@ -81,11 +80,11 @@ async function getDetails() {
 
         let status = '';
         if (construction[section.key] === 'ok') {
-            td.innerHTML = '✅';
+            status = '✅';
         } else if (construction[section.key] === 'torepair') {
-            td.innerHTML = '❌';
+            status = '❌';
         } else {
-            td.innerHTML = '❓';
+            status = '❓';
         }
 
         h3.innerHTML = section.title + ' ' + status;

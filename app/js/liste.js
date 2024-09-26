@@ -199,11 +199,19 @@ function constructChecklistRow(checklist, headingsToEntry) {
 
     const dateTd = document.createElement('td');
     dateTd.innerHTML = new Date(checklist.timestamp).toLocaleString();
+    if (checklist.detailsLink) {
+        dateTd.innerHTML = '<a href="' + checklist.detailsLink + '">' +
+        dateTd.innerHTML + '</a>';
+    }
 
     tr.appendChild(dateTd);
 
     const constructionTd = document.createElement('td');
     constructionTd.innerHTML = checklist.partitionKey;
+    if (checklist.detailsLink) {
+        constructionTd.innerHTML = '<a href="' +
+        checklist.detailsLink + '">' + checklist.partitionKey + '</a>';
+    }
 
     tr.appendChild(constructionTd);
 

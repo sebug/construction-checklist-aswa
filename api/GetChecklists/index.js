@@ -87,6 +87,8 @@ module.exports = async function (context, req) {
 
         let checklists = [];
         for await (const entity of checklistsIter) {
+            entity.detailsLink = '/details_control.html?partitionKey=' +
+                entity.partitionKey + '&rowKey=' + entity.rowKey;
             checklists.push(entity);
         }
 
