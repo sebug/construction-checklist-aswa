@@ -89,14 +89,14 @@ async function getDetails() {
 
         h3.innerHTML = section.title + ' ' + status;
 
-        section.appendChild(h3);
+        sectionElement.appendChild(h3);
 
         if (construction[section.key + 'Comments']) {
             const commentsP = document.createElement('p');
 
             commentsP.innerHTML = construction[section.key + 'Comments'];
 
-            section.appendChild(commentsP);
+            sectionElement.appendChild(commentsP);
         }
 
         main.appendChild(sectionElement);
