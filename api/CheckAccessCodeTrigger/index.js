@@ -1,7 +1,8 @@
 const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } = require("@azure/data-tables");
 
 const checkAccessCodeValidity = async (context, construction, accessCode) => {
-	if (Number(accessCode) === Number(process.env.GLOBAL_CODE)) {
+	if (Number(accessCode) === Number(process.env.GLOBAL_CODE) ||
+        Number(accessCode) === Number(process.env.PERIODIC_CONTROL_CODE)) {
 		return true;
 	}
 

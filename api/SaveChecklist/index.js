@@ -33,8 +33,10 @@ const isGlobalCode = (accessCode) => {
 	return false;
 };
 
+const isPeriodicControlCode = (accessCode) => Number(accessCode) === Number(process.env.PERIODIC_CONTROL_CODE);
+
 const checkAccessCodeValidity = async (context, construction, accessCode) => {
-	if (isGlobalCode(accessCode)) {
+	if (isGlobalCode(accessCode) || isPeriodicControlCode(accessCode)) {
 		return true;
 	}
 
@@ -233,6 +235,9 @@ module.exports = async function (context, req) {
 			msg.subject = 'A réparer: ' + nameOfConstruction;
 		}
 
+		if (isPeriodicControlCode(accessCode)) {
+			msg.subject = 'Contrôle Périodique - ' + msg.subject;
+		}
 
 		let text = `Compte-rendu contrôle construction ${nameOfConstruction}
 		établi par ${mailAddress} le ${date}
