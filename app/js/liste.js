@@ -165,6 +165,7 @@ function constructCheckinsDetail(getListObject) {
     headerTr.appendChild(headerTh('Construction'));
     headerTr.appendChild(headerTh('Scan Entrée'));
     headerTr.appendChild(headerTh('Scan Sortie'));
+    headerTr.appendChild(headerTh('Cours?'));
     for (let headingToEntry of headingsToEntry) {
         headerTr.appendChild(headerTh(headingToEntry.heading));
     }
@@ -217,6 +218,10 @@ function constructChecklistRow(checklist, headingsToEntry) {
 
     tr.appendChild(timeTD(checklist.checkin));
     tr.appendChild(timeTD(checklist.checkout));
+
+    const courseTd = document.createElement('td');
+    courseTd.innerHTML = checklist.isYearlyCourse ? '<strong>oui</strong>' : 'non';
+    tr.appendChild(courseTd);
 
     for (let headingToEntry of headingsToEntry) {
         tr.appendChild(checklistTd(headingToEntry.entry(checklist), headingToEntry.detail(checklist)));
