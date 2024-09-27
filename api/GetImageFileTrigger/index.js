@@ -31,13 +31,18 @@ module.exports = async function (context, req) {
         const downloadBlockBlobResponse = await blockBlobClient.download();
         const downloaded = await streamToBuffer(downloadBlockBlobResponse.readableStreamBody);
 
+        let contentType = "image/jpeg";
+        if (blobFileName.endsWith(".png")) {
+            contentType = "image/png";
+        }
 
         context.res = {
+            headers: {
+                "Content-Type": contentType
+            },
+            isRaw: true,
             // status: 200, /* Defaults to 200 */
-            body: JSON.stringify({
-                blobFileName: blobFileName,
-                downloaded: true
-            })
+            body: new Uint8Array(downloaded)
         };
 		
     } catch (e) {
