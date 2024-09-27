@@ -199,7 +199,7 @@ module.exports = async function (context, req) {
 						if (mailAddress.toLowerCase().indexOf('donotsend') >= 0) {
 							shouldSendMail = false;
 						}
-						checklistEntity.mailAddress = mailAddress;
+						checkListEntity.mailAddress = mailAddress;
 						break;
 					case 'secondMailAddress':
 						secondMailAddress = part.field;
