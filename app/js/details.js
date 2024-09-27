@@ -99,6 +99,27 @@ async function getDetails() {
             sectionElement.appendChild(commentsP);
         }
 
+        const photoSuffixes = ['', '1', '2', '3', '4', '5', '6'];
+        let photoLinks = [];
+        for (const suffix of photoSuffixes) {
+            const photoLink = construction[section.key + 'Photo' + suffix + 'Link'];
+            if (photoLink) {
+                photoLinks.push(photoLink);
+            }
+        }
+
+        if (photoLinks && photoLinks.length) {
+            const photosElement = document.createElement('p');
+
+            for (const photoLink of photoLinks) {
+                const photoElement = document.createElement('img');
+                photoElement.setAttribute('src', photoLink);
+                photosElement.appendChild(photoElement);
+            }
+
+            sectionElement.appendChild(photosElement);
+        }
+
         main.appendChild(sectionElement);
     }
 
