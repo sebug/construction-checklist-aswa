@@ -28,7 +28,7 @@ async function getDetails() {
 
     const sections = [
         {
-            key: 'access',
+            key: 'illumination',
             title: 'Éclairage (Changement ampoules et Néons)'
         },
         {
