@@ -18,6 +18,14 @@ async function getDetails() {
 
     main.appendChild(controlDate);
 
+    if (construction.mailAddress || construction.secondMailAddress) {
+        const establishedBy = document.createElement('p');
+        establishedBy.innerHTML = '<strong>Établi par:</strong> ' +
+            construction.mailAddress + (construction.secondMailAddress ? ', ' : '') +
+            (construction.secondMailAddress || '');
+        main.appendChild(establishedBy);
+    }
+
     const sections = [
         {
             key: 'access',
