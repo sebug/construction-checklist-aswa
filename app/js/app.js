@@ -133,3 +133,16 @@ for (const fileInput of fileInputs) {
         updateFileInfoText(e.target, dataTransfer.files);
     });
 }
+
+const formElement = document.querySelector('form');
+
+if (formElement) {
+    formElement.addEventListener('submit', (ev) => {
+        try {
+            console.log(ev);
+            Array.from(document.querySelectorAll('textarea')).forEach(ta => { if (ta.value) { ta.value = ta.value.replaceAll('\n', '##'); } });
+        } catch (e) {
+            console.log(e);
+        }
+    });
+}
