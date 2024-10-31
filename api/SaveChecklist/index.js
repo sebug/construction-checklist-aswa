@@ -250,13 +250,13 @@ module.exports = async function (context, req) {
 			if (part && part.name) {
 				if (part.name.indexOf('Comments') >= 0) {
 							// always add
-							text += part.field + '\n';
+							text += part.field.replaceAll('##', '\n') + '\n';
 					if (part.field) {
-					html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8') + '</p>';
+					html += '<p>' + new Buffer(part.field, 'ascii').toString('utf8').replaceAll('##', '<br>\n') + '</p>';
 					} else {
 					html += '<p>' + part.field + '</p>';
 					}
-					checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8');
+					checklistEntity[part.name] = new Buffer(part.field, 'ascii').toString('utf8').replaceAll('##', '<br>\n');
 				} else if (fieldCodeToFieldName[part.name]) {
 					let fieldText = part.field;
 					if (fieldText === 'ok') {
