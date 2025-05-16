@@ -37,7 +37,7 @@ const checkAccessCodeValidity = async (context, construction, accessCode) => {
         }
         return Number(entityResult.AccessCode) === Number(accessCode);
     } catch (err) {
-        context.log(err);
+        context.error(err);
         return false;
     }
 };
