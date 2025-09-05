@@ -30,7 +30,7 @@ module.exports = async function (context, req) {
         });
     
         const tableClient = new TableClient(url, tableName, credential);
-        const rowKey = construction.toLowerCase();
+        const rowKey = req.query.construction.toLowerCase();
 
         let entityResult = await tableClient.getEntity('prod', rowKey);
         if (entityResult && entityResult.ProofKey) {
