@@ -317,7 +317,7 @@ module.exports = async function (context, req) {
 			}
 		}
 
-		checkListEntity.proofKey = proofKey;
+		checklistEntity.proofKey = proofKey;
 
 		msg.text = text;
 		msg.html = html;
