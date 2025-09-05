@@ -37,7 +37,8 @@ module.exports = async function (context, req) {
             partitionKey: "Prod",
             rowKey: rowKey,
             StartDate: d.toISOString(),
-            Construction: req.query.construction
+            Construction: req.query.construction,
+            ProofKey: req.query.proofKey
         };
         await tableClient.createEntity(entity);
 
@@ -84,7 +85,8 @@ module.exports = async function (context, req) {
         context.res = {
             status: 302,
             headers: {
-                "Location": "/?construction=" + encodeURIComponent(req.query.construction)
+                "Location": "/?construction=" + encodeURIComponent(req.query.construction) +
+                (req.query.proofKey ? ('&proofKey=' + encodeURIComponent(req.query.proofKey)) : '')
             },
             body: null
         };

@@ -170,6 +170,7 @@ module.exports = async function (context, req) {
 			rowKey: new Date().toISOString()
 		};
 
+		let proofKey;
 		let accessCode;
 		for (let part of parts) {
 			if (part && part.name) {
@@ -207,6 +208,9 @@ module.exports = async function (context, req) {
 						secondMailAddress = part.field;
 						checklistEntity.secondMailAddress = secondMailAddress;
 						break;
+						case 'proofKey':
+							proofKey = part.field;
+							break;
 					}
 			if (part.field === 'torepair') {
 				hasToRepair = true;
@@ -312,6 +316,8 @@ module.exports = async function (context, req) {
 				}
 			}
 		}
+
+		checkListEntity.proofKey = proofKey;
 
 		msg.text = text;
 		msg.html = html;

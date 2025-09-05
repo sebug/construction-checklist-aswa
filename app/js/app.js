@@ -14,6 +14,8 @@ document.querySelector('#date').value = year + '-' + month + '-' + day;
 const accessCodeInput = document.querySelector('#accessCode');
 const nameOfConstructionInput = document.querySelector('#nameOfConstruction');
 
+const proofKey = searchParams.get('proofKey');
+
 const checkAccessCode = async () => {
     const accessCode = accessCodeInput.value;
     const nameOfConstruction = nameOfConstructionInput.value;
@@ -29,7 +31,8 @@ const checkAccessCode = async () => {
                 },
                 body: JSON.stringify({
                     construction: nameOfConstruction,
-                    accessCode: accessCode
+                    accessCode: accessCode,
+                    proofKey: proofKey
                 })
             });
             if (response.status !== 200) {
@@ -135,6 +138,12 @@ for (const fileInput of fileInputs) {
 }
 
 const formElement = document.querySelector('form');
+
+const proofKeyElement = formElement.querySelector('#proofKey');
+
+if (proofKeyElement) {
+    proofKeyElement.value = proofKey;
+}
 
 if (formElement) {
     formElement.addEventListener('submit', (ev) => {

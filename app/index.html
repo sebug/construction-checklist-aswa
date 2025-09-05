@@ -31,6 +31,8 @@
       <form method="post" action="/api/SaveChecklist" enctype="multipart/form-data">
 	<h2>Données de base</h2>
 
+	<input type="hidden" id="proofKey" name="proofKey" value="" />
+
 	<div class="form-group">
 	  <label for="nameOfConstruction">Nom de la construction</label>
 	  <input type="text" class="form-control" id="nameOfConstruction" name="nameOfConstruction" required />
