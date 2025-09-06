@@ -4,7 +4,7 @@ const { TableServiceClient, AzureNamedKeyCredential, TableClient, TableQuery } =
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
-    const url = process.env.BASE_URL + '/api/CheckInTrigger?construction=' +
+    let url = process.env.BASE_URL + '/api/CheckInTrigger?construction=' +
     encodeURIComponent(req.query.construction);
 
     const account = process.env.TABLES_STORAGE_ACCOUNT_NAME;
@@ -12,11 +12,11 @@ module.exports = async function (context, req) {
     const suffix = process.env.TABLES_STORAGE_ENDPOINT_SUFFIX;
 
     try {
-        const url = 'https://' + account + '.table.' + suffix;
+        const tcUrl = 'https://' + account + '.table.' + suffix;
 
         const credential = new AzureNamedKeyCredential(account, accountKey);
         const serviceClient = new TableServiceClient(
-            url,
+            tcUrl,
             credential
         );
     
