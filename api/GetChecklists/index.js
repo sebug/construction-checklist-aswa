@@ -59,7 +59,8 @@ module.exports = async function (context, req) {
         for await (const entity of constructionsIter) {
             constructionsList.push({
                 name: entity.rowKey,
-                accessCode: entity.AccessCode
+                accessCode: entity.AccessCode,
+                proofKey: entity.ProofKey
             });
         }
 
@@ -79,6 +80,13 @@ module.exports = async function (context, req) {
             return 0;
         });
 
+        const proofKeyDict = {};
+        for (const constructionForProofKey of constructionsList) {
+            if (constructionForProofKey.proofKey) {
+                proofKeyDict[constructionForProofKey.proofKey] = constructionForProofKey.name;
+            }
+        }
+
         const checklistTableName = 'checklists';
 
         const checklistsTableClient = new TableClient(url, checklistTableName, credential);
@@ -89,6 +97,13 @@ module.exports = async function (context, req) {
         for await (const entity of checklistsIter) {
             entity.detailsLink = '/details_control.html?partitionKey=' +
                 entity.partitionKey + '&rowKey=' + entity.rowKey;
+
+            if (entity.proofKey && proofKeyDict[entity.proofKey] === entity.partitionKey) {
+                entity.hasValidProofKey = true;
+            } else {
+                entity.hasValidProofKey = false;
+            }
+
             checklists.push(entity);
         }
 
