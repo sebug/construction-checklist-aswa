@@ -166,6 +166,7 @@ function constructCheckinsDetail(getListObject) {
     headerTr.appendChild(headerTh('Scan Entrée'));
     headerTr.appendChild(headerTh('Scan Sortie'));
     headerTr.appendChild(headerTh('Cours?'));
+    headerTr.appendChild(headerTh('QR actuel?'));
     for (let headingToEntry of headingsToEntry) {
         headerTr.appendChild(headerTh(headingToEntry.heading));
     }
@@ -222,6 +223,10 @@ function constructChecklistRow(checklist, headingsToEntry) {
     const courseTd = document.createElement('td');
     courseTd.innerHTML = checklist.isYearlyCourse ? '<strong>oui</strong>' : 'non';
     tr.appendChild(courseTd);
+
+    const hasValidProofKeyTd = document.createElement('td');
+    hasValidProofKeyTd.innerHTML = checklist.hasValidProofKey ? '✅' : '❌';
+    tr.appendChild(hasValidProofKeyTd);
 
     for (let headingToEntry of headingsToEntry) {
         tr.appendChild(checklistTd(headingToEntry.entry(checklist), headingToEntry.detail(checklist)));
