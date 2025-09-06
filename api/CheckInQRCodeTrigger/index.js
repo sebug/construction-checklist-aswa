@@ -29,7 +29,7 @@ module.exports = async function (context, req) {
             }
         });
     
-        const tableClient = new TableClient(url, tableName, credential);
+        const tableClient = new TableClient(tcUrl, tableName, credential);
         const rowKey = req.query.construction.toLowerCase();
 
         let entityResult = await tableClient.getEntity('prod', rowKey);
