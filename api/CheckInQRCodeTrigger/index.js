@@ -37,7 +37,12 @@ module.exports = async function (context, req) {
             url += '&proofKey=' + encodeURIComponent(entityResult.ProofKey);
         }
     } catch (err) {
+        context.res = {
+            status: 500,
+            body: '' + err
+        }
         context.log(err);
+        return;
     }
 
     const opts = {
