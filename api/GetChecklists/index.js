@@ -98,7 +98,8 @@ module.exports = async function (context, req) {
             entity.detailsLink = '/details_control.html?partitionKey=' +
                 entity.partitionKey + '&rowKey=' + entity.rowKey;
 
-            if (entity.proofKey && proofKeyDict[entity.proofKey] === entity.partitionKey) {
+            if (entity.proofKey && proofKeyDict[entity.proofKey] &&
+                proofKeyDict[entity.proofKey].toLowerCase() === entity.partitionKey.toLowerCase()) {
                 entity.hasValidProofKey = true;
             } else {
                 entity.hasValidProofKey = false;
